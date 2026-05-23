@@ -1,0 +1,833 @@
+{
+  "_meta": {
+    "generated_at": "2026-05-23T14:02:39.710726+00:00",
+    "source_slug": "jellyfin",
+    "phase": "deep_analysis"
+  },
+  "findings": [
+    {
+      "id": 56,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Startup.cs",
+      "value": "Microsoft.AspNetCore.Hosting",
+      "confidence": 0.95,
+      "notes": "Required for hosting the web application and managing the service lifecycle."
+    },
+    {
+      "id": 57,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Startup.cs",
+      "value": "Microsoft.AspNetCore.StaticFiles",
+      "confidence": 0.95,
+      "notes": "Used for serving static files such as CSS, JavaScript, and images in the web UI."
+    },
+    {
+      "id": 58,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Startup.cs",
+      "value": "Prometheus",
+      "confidence": 0.95,
+      "notes": "Used for health checks and metrics collection via the AddHealthChecks() and Prometheus integration."
+    },
+    {
+      "id": 59,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Startup.cs",
+      "value": "Jellyfin.Database.Implementations",
+      "confidence": 0.95,
+      "notes": "Provides database context and persistence for Jellyfin's metadata and user data."
+    },
+    {
+      "id": 60,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Startup.cs",
+      "value": "Jellyfin.LiveTv.Extensions",
+      "confidence": 0.95,
+      "notes": "Supports live TV functionality including recording and playback features."
+    },
+    {
+      "id": 61,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Startup.cs",
+      "value": "MediaBrowser.Common.Net",
+      "confidence": 0.95,
+      "notes": "Provides networking utilities and HTTP client abstractions used throughout the application."
+    },
+    {
+      "id": 62,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Startup.cs",
+      "value": "Microsoft.Extensions.Hosting",
+      "confidence": 0.95,
+      "notes": "Required for the application to run as a hosted service with lifecycle management."
+    },
+    {
+      "id": 63,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Startup.cs",
+      "value": "Microsoft.AspNetCore.Localization",
+      "confidence": 0.95,
+      "notes": "Used for UI localization based on user preferences and culture settings."
+    },
+    {
+      "id": 123,
+      "category": "dependency",
+      "source_file": "Jellyfin.Api/Controllers/StartupController.cs",
+      "value": "IServerConfigurationManager",
+      "confidence": 0.95,
+      "notes": "Required dependency for accessing server configuration during startup wizard operations."
+    },
+    {
+      "id": 124,
+      "category": "dependency",
+      "source_file": "Jellyfin.Api/Controllers/StartupController.cs",
+      "value": "IUserManager",
+      "confidence": 0.95,
+      "notes": "Dependency for managing user data during the startup wizard, including first user retrieval and updates."
+    },
+    {
+      "id": 20,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen4-4K-5.1.json",
+      "value": "h264,hevc,vp8,vp9,ac3,eac3,opus,vorbis,aac,mp3,flac,wma,wmv,avi,mkv,m2ts,ts,mpegts,asf,mov,opus,webm,m4a,m4b,ogg,wav",
+      "confidence": 0.75,
+      "notes": "List of supported audio and video codecs and containers indicating media processing dependencies"
+    },
+    {
+      "id": 28,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen3-stereo.json",
+      "value": "DirectPlayProfile",
+      "confidence": 0.75,
+      "notes": "Indicates dependency on media codecs such as VP8, VP9, H.264, AAC, FLAC, OPUS, and others for direct playback"
+    },
+    {
+      "id": 29,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen3-stereo.json",
+      "value": "TranscodingProfile",
+      "confidence": 0.75,
+      "notes": "Defines transcoding behavior for audio and video, including container handling and protocol (HLS, HTTP) settings"
+    },
+    {
+      "id": 48,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-AndroidPixel.json",
+      "value": "mp3,aac,alac,ac3",
+      "confidence": 0.75,
+      "notes": "Defined audio codecs supported in direct play for container types like mp4 and fmp4, indicating dependency on audio decoding libraries."
+    },
+    {
+      "id": 49,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-AndroidPixel.json",
+      "value": "h264,h265,hevc,av1,vp8,vp9",
+      "confidence": 0.75,
+      "notes": "Video codecs supported in direct and transcoded playback, indicating dependency on hardware or software video decoding (e.g., libavcodec)."
+    },
+    {
+      "id": 68,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-WebOS-23.json",
+      "value": "h264,hevc,vp8,vp9,av1",
+      "confidence": 0.75,
+      "notes": "Video codecs specified in the profile indicate dependency on hardware or software support for H.264, HEVC, VP8, VP9, and AV1 decoding/encoding."
+    },
+    {
+      "id": 69,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-WebOS-23.json",
+      "value": "aac,ac3,eac3,mp2,pcm_s16le,pcm_s24le,opus,flac,vorbis",
+      "confidence": 0.75,
+      "notes": "Audio codecs listed in profiles indicate dependency on audio processing libraries supporting AAC, AC3, FLAC, OPUS, and Vorbis."
+    },
+    {
+      "id": 80,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Chrome.json",
+      "value": "h264,hevc,vp9,av1",
+      "confidence": 0.75,
+      "notes": "Video codecs specified in DirectPlayProfiles and TranscodingProfiles, indicating dependency on hardware or software support for these codecs."
+    },
+    {
+      "id": 81,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Chrome.json",
+      "value": "aac,mp3,mp2,opus,flac,vorbis",
+      "confidence": 0.75,
+      "notes": "Audio codecs specified in DirectPlayProfiles and TranscodingProfiles, indicating dependency on audio decoding libraries for supported formats."
+    },
+    {
+      "id": 113,
+      "category": "dependency",
+      "source_file": "Emby.Server.Implementations/Localization/Core/tr.json",
+      "value": "libglib2.0-0",
+      "confidence": 0.75,
+      "notes": "Common dependency for localization and UI components, likely required by the Emby snap for string handling and internationalization."
+    },
+    {
+      "id": 129,
+      "category": "dependency",
+      "source_file": "Emby.Server.Implementations/Localization/Core/ms.json",
+      "value": "Localization",
+      "confidence": 0.75,
+      "notes": "Indicates dependency on localization system, which may require language support in snap metadata"
+    },
+    {
+      "id": 133,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-RokuSSPlus.json",
+      "value": "h264, h265, hevc, mpeg2video",
+      "confidence": 0.75,
+      "notes": "Video codecs specified in DirectPlay and Transcoding profiles, indicating dependency on video decoding libraries (e.g., libavcodec)."
+    },
+    {
+      "id": 134,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-RokuSSPlus.json",
+      "value": "aac, mp3, flac, opus, vorbis",
+      "confidence": 0.75,
+      "notes": "Audio codecs supported in direct play and transcoding, suggesting dependency on audio decoding and encoding libraries (e.g., libavcodec, libopus)."
+    },
+    {
+      "id": 157,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_webm.json",
+      "value": "libavcodec",
+      "confidence": 0.75,
+      "notes": "Indirect dependency implied by codec usage (vp8, vorbis) for video and audio stream parsing."
+    },
+    {
+      "id": 217,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_interlaced.json",
+      "value": "h264",
+      "confidence": 0.75,
+      "notes": "Video codec used in the test stream (H.264/AVC) indicating dependency on video encoding libraries"
+    },
+    {
+      "id": 365,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/lineup.json",
+      "value": "http://192.168.1.111:5004",
+      "confidence": 0.75,
+      "notes": "External service dependency for live TV channel data"
+    },
+    {
+      "id": 368,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/SchedulesDirect/token_live_response.json",
+      "value": "libcurl4-openssl-dev",
+      "confidence": 0.75,
+      "notes": "Potential build-time dependency for handling HTTP requests in a Snap application, inferred from the use of HTTP token fetching."
+    },
+    {
+      "id": 383,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.MediaEncoding.Keyframes.Tests/FfProbe/Test Data/keyframes_streamduration_result.json",
+      "value": "Jellyfin.MediaEncoding.Keyframes.Tests",
+      "confidence": 0.75,
+      "notes": "Indicates a dependency on the Jellyfin.MediaEncoding.Keyframes.Tests package, which may require specific test infrastructure or runtime environment."
+    },
+    {
+      "id": 385,
+      "category": "dependency",
+      "source_file": "nuget.config",
+      "value": "nuget",
+      "confidence": 0.75,
+      "notes": "Configures NuGet package source to use https://api.nuget.org/v3/index.json for package resolution"
+    },
+    {
+      "id": 408,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/10.10.10.100/discover.json",
+      "value": "hdhomerun3_atsc",
+      "confidence": 0.75,
+      "notes": "The FirmwareName indicates the required firmware version for the HDHomeRun device, which is relevant for ensuring compatibility with the Jellyfin Live TV service."
+    },
+    {
+      "id": 413,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/SchedulesDirect/token_offline_response.json",
+      "value": "SchedulesDirect",
+      "confidence": 0.75,
+      "notes": "Implies dependency on SchedulesDirect API for TV schedule data, which may influence snap's network or service dependencies."
+    },
+    {
+      "id": 4,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server.Implementations/FullSystemBackup/BackupService.cs",
+      "value": "Microsoft.EntityFrameworkCore",
+      "confidence": 0.5,
+      "notes": "Required for database operations during backup and restore processes, particularly for version and data integrity checks."
+    },
+    {
+      "id": 5,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server.Implementations/FullSystemBackup/BackupService.cs",
+      "value": "System.IO.Compression",
+      "confidence": 0.5,
+      "notes": "Used to read and extract ZIP archives during backup restoration operations."
+    },
+    {
+      "id": 6,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server.Implementations/FullSystemBackup/BackupService.cs",
+      "value": "System.Text.Json",
+      "confidence": 0.5,
+      "notes": "Used to deserialize the backup manifest JSON structure from the archive."
+    },
+    {
+      "id": 16,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Program.cs",
+      "value": "Serilog",
+      "confidence": 0.5,
+      "notes": "Logging framework used for structured logging and configuration via logging configuration files (e.g., logging.json)."
+    },
+    {
+      "id": 17,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Program.cs",
+      "value": "CommandLine",
+      "confidence": 0.5,
+      "notes": "Used for parsing command-line arguments and handling startup options such as web client hosting and restore behavior."
+    },
+    {
+      "id": 77,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Extensions/StringExtensions.cs",
+      "value": "ICU4N.Text",
+      "confidence": 0.5,
+      "notes": "Runtime dependency for handling Unicode and transliteration operations"
+    },
+    {
+      "id": 105,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Extensions/WebHostBuilderExtensions.cs",
+      "value": "X509Certificate2",
+      "confidence": 0.5,
+      "notes": "Used for HTTPS configuration; required when httpsPort is set and running in production."
+    },
+    {
+      "id": 166,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.MediaEncoding.Keyframes/FfProbe/FfProbeKeyframeExtractor.cs",
+      "value": "ffprobe",
+      "confidence": 0.5,
+      "notes": "The executable is referenced directly via ffProbePath, indicating a runtime dependency on the ffprobe tool from FFmpeg."
+    },
+    {
+      "id": 173,
+      "category": "dependency",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/Program.cs",
+      "value": "AutoFixture.AutoMoq",
+      "confidence": 0.5,
+      "notes": "Used to create and inject mock dependencies like IServerApplicationHost and IConfiguration for testing."
+    },
+    {
+      "id": 174,
+      "category": "dependency",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/Program.cs",
+      "value": "SharpFuzz",
+      "confidence": 0.5,
+      "notes": "Used for out-of-process fuzzing via Fuzzer.OutOfProcess.Run, enabling input-based testing of code paths."
+    },
+    {
+      "id": 175,
+      "category": "dependency",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/Program.cs",
+      "value": "MediaBrowser.Controller",
+      "confidence": 0.5,
+      "notes": "Provides core application services including configuration and entity handling, used in mocking and fuzzing logic."
+    },
+    {
+      "id": 176,
+      "category": "dependency",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/Program.cs",
+      "value": "Moq",
+      "confidence": 0.5,
+      "notes": "Used to mock dependencies such as IServerApplicationHost and IConfigurationSection for isolated testing."
+    },
+    {
+      "id": 178,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "CommandLineParser",
+      "confidence": 0.5,
+      "notes": "Used for command-line argument parsing in Jellyfin server"
+    },
+    {
+      "id": 179,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore",
+      "confidence": 0.5,
+      "notes": "Provides health check capabilities with Entity Framework Core support"
+    },
+    {
+      "id": 180,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Morestachio",
+      "confidence": 0.5,
+      "notes": "Template engine used for dynamic string formatting in configuration or UI"
+    },
+    {
+      "id": 181,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "prometheus-net",
+      "confidence": 0.5,
+      "notes": "Metrics collection and exposure for monitoring via Prometheus"
+    },
+    {
+      "id": 182,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "prometheus-net.AspNetCore",
+      "confidence": 0.5,
+      "notes": "Enables Prometheus metrics integration with ASP.NET Core"
+    },
+    {
+      "id": 183,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Serilog.AspNetCore",
+      "confidence": 0.5,
+      "notes": "Integrates Serilog logging with ASP.NET Core for structured logging"
+    },
+    {
+      "id": 184,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Serilog.Enrichers.Thread",
+      "confidence": 0.5,
+      "notes": "Adds thread information to log entries for better debugging"
+    },
+    {
+      "id": 185,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Serilog.Expressions",
+      "confidence": 0.5,
+      "notes": "Allows runtime expression evaluation in log messages"
+    },
+    {
+      "id": 186,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Serilog.Settings.Configuration",
+      "confidence": 0.5,
+      "notes": "Loads Serilog configuration from application settings"
+    },
+    {
+      "id": 187,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Serilog.Sinks.Async",
+      "confidence": 0.5,
+      "notes": "Asynchronously writes logs to sinks to prevent blocking"
+    },
+    {
+      "id": 188,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Serilog.Sinks.Console",
+      "confidence": 0.5,
+      "notes": "Sends logs to console output"
+    },
+    {
+      "id": 189,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Serilog.Sinks.File",
+      "confidence": 0.5,
+      "notes": "Saves logs to a file for persistence and debugging"
+    },
+    {
+      "id": 190,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Serilog.Sinks.Graylog",
+      "confidence": 0.5,
+      "notes": "Sends logs to Graylog for centralized logging"
+    },
+    {
+      "id": 191,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Jellyfin.Drawing",
+      "confidence": 0.5,
+      "notes": "Provides UI rendering capabilities for Jellyfin"
+    },
+    {
+      "id": 192,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Emby.Server.Implementations",
+      "confidence": 0.5,
+      "notes": "Shared implementation code for Emby and Jellyfin server features"
+    },
+    {
+      "id": 193,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Jellyfin.Drawing.Skia",
+      "confidence": 0.5,
+      "notes": "Skia-based graphics rendering for Jellyfin"
+    },
+    {
+      "id": 194,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Jellyfin.LiveTv",
+      "confidence": 0.5,
+      "notes": "Supports live TV functionality in the Jellyfin server"
+    },
+    {
+      "id": 195,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Jellyfin.Server.Implementations",
+      "confidence": 0.5,
+      "notes": "Core server implementation logic"
+    },
+    {
+      "id": 196,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "Jellyfin.MediaEncoding.Hls",
+      "confidence": 0.5,
+      "notes": "Handles HLS media encoding and streaming"
+    },
+    {
+      "id": 206,
+      "category": "dependency",
+      "source_file": "Jellyfin.Api/Jellyfin.Api.csproj",
+      "value": "Microsoft.AspNetCore.Authorization",
+      "confidence": 0.5,
+      "notes": "Required for authorization middleware in the API layer"
+    },
+    {
+      "id": 207,
+      "category": "dependency",
+      "source_file": "Jellyfin.Api/Jellyfin.Api.csproj",
+      "value": "Microsoft.Extensions.Http",
+      "confidence": 0.5,
+      "notes": "Used for HTTP client and integration with HttpClient in the API"
+    },
+    {
+      "id": 208,
+      "category": "dependency",
+      "source_file": "Jellyfin.Api/Jellyfin.Api.csproj",
+      "value": "Swashbuckle.AspNetCore",
+      "confidence": 0.5,
+      "notes": "Provides Swagger UI support for API documentation"
+    },
+    {
+      "id": 209,
+      "category": "dependency",
+      "source_file": "Jellyfin.Api/Jellyfin.Api.csproj",
+      "value": "Swashbuckle.AspNetCore.ReDoc",
+      "confidence": 0.5,
+      "notes": "Provides Redoc UI support for API documentation"
+    },
+    {
+      "id": 211,
+      "category": "dependency",
+      "source_file": "Jellyfin.Api/Jellyfin.Api.csproj",
+      "value": "MediaBrowser.MediaEncoding",
+      "confidence": 0.5,
+      "notes": "Media encoding services referenced for encoding-related API operations"
+    },
+    {
+      "id": 213,
+      "category": "dependency",
+      "source_file": "Jellyfin.Api/Jellyfin.Api.csproj",
+      "value": "Jellyfin.Networking",
+      "confidence": 0.5,
+      "notes": "Networking utilities used for API communication and external service interactions"
+    },
+    {
+      "id": 228,
+      "category": "dependency",
+      "source_file": "MediaBrowser.Providers/Plugins/AudioDb/Configuration/config.html",
+      "value": "emby-input,emby-button,emby-checkbox",
+      "confidence": 0.5,
+      "notes": "UI components required by the configuration page, indicating dependency on Emby's UI framework."
+    },
+    {
+      "id": 229,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Extensions/Jellyfin.Extensions.csproj",
+      "value": "Diacritics",
+      "confidence": 0.5,
+      "notes": "A package dependency specified in the project for handling diacritics, likely used for text processing in Jellyfin."
+    },
+    {
+      "id": 230,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Extensions/Jellyfin.Extensions.csproj",
+      "value": "ICU4N.Transliterator",
+      "confidence": 0.5,
+      "notes": "A dependency for text transliteration and Unicode handling, noted to have prerelease versions only."
+    },
+    {
+      "id": 231,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Database/Jellyfin.Database.Implementations/Jellyfin.Database.Implementations.csproj",
+      "value": "Polly",
+      "confidence": 0.5,
+      "notes": "A dependency injected for resilience and retry logic in the database implementations."
+    },
+    {
+      "id": 232,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Database/Jellyfin.Database.Implementations/Jellyfin.Database.Implementations.csproj",
+      "value": "Microsoft.EntityFrameworkCore.Relational",
+      "confidence": 0.5,
+      "notes": "Core Entity Framework relational database support used for database operations."
+    },
+    {
+      "id": 233,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Database/Jellyfin.Database.Implementations/Jellyfin.Database.Implementations.csproj",
+      "value": "Microsoft.EntityFrameworkCore.Design",
+      "confidence": 0.5,
+      "notes": "Design-time package for EF Core tools, marked as private with full include assets for tooling support."
+    },
+    {
+      "id": 234,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Database/Jellyfin.Database.Implementations/Jellyfin.Database.Implementations.csproj",
+      "value": "Microsoft.EntityFrameworkCore.Tools",
+      "confidence": 0.5,
+      "notes": "Tools package for EF Core, marked as private with full include assets for development and design-time features."
+    },
+    {
+      "id": 241,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server.Implementations/Jellyfin.Server.Implementations.csproj",
+      "value": "AsyncKeyedLock",
+      "confidence": 0.5,
+      "notes": "A dependency added for thread-safe keyed locking in the application"
+    },
+    {
+      "id": 243,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server.Implementations/Jellyfin.Server.Implementations.csproj",
+      "value": "Jellyfin.Data",
+      "confidence": 0.5,
+      "notes": "Project reference to the data layer, indicating shared data model and repository usage"
+    },
+    {
+      "id": 245,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server.Implementations/Jellyfin.Server.Implementations.csproj",
+      "value": "MediaBrowser.Model",
+      "confidence": 0.5,
+      "notes": "Reference to the model layer, indicating shared data and entity definitions"
+    },
+    {
+      "id": 247,
+      "category": "dependency",
+      "source_file": "Jellyfin.Server.Implementations/Jellyfin.Server.Implementations.csproj",
+      "value": "Jellyfin.Database.Providers.Sqlite",
+      "confidence": 0.5,
+      "notes": "Reference to SQLite-specific database provider, indicating SQLite support in the backend"
+    },
+    {
+      "id": 257,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Drawing.Skia/Jellyfin.Drawing.Skia.csproj",
+      "value": "SkiaSharp",
+      "confidence": 0.5,
+      "notes": "Required for rendering graphics using SkiaSharp in the Jellyfin.Drawing.Skia component"
+    },
+    {
+      "id": 258,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Drawing.Skia/Jellyfin.Drawing.Skia.csproj",
+      "value": "SkiaSharp.NativeAssets.Linux",
+      "confidence": 0.5,
+      "notes": "Provides native Linux assets for SkiaSharp to enable platform-specific rendering"
+    },
+    {
+      "id": 259,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Drawing.Skia/Jellyfin.Drawing.Skia.csproj",
+      "value": "BlurHashSharp",
+      "confidence": 0.5,
+      "notes": "Used for decoding and rendering BlurHash images"
+    },
+    {
+      "id": 260,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Drawing.Skia/Jellyfin.Drawing.Skia.csproj",
+      "value": "BlurHashSharp.SkiaSharp",
+      "confidence": 0.5,
+      "notes": "Enables integration of BlurHash functionality with SkiaSharp for image rendering"
+    },
+    {
+      "id": 261,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Drawing.Skia/Jellyfin.Drawing.Skia.csproj",
+      "value": "HarfBuzzSharp.NativeAssets.Linux",
+      "confidence": 0.5,
+      "notes": "Provides HarfBuzz text shaping support on Linux for text rendering"
+    },
+    {
+      "id": 262,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Drawing.Skia/Jellyfin.Drawing.Skia.csproj",
+      "value": "SkiaSharp.HarfBuzz",
+      "confidence": 0.5,
+      "notes": "Enables HarfBuzz text shaping integration with SkiaSharp for advanced text layout"
+    },
+    {
+      "id": 263,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Drawing.Skia/Jellyfin.Drawing.Skia.csproj",
+      "value": "Svg.Skia",
+      "confidence": 0.5,
+      "notes": "Allows rendering SVG content using SkiaSharp for vector graphics support"
+    },
+    {
+      "id": 267,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.MediaEncoding.Keyframes/Jellyfin.MediaEncoding.Keyframes.csproj",
+      "value": "NEbml",
+      "confidence": 0.5,
+      "notes": "The project references the NEbml package, which is likely used for handling EBML (Extensible Binary Markup Language) operations in media encoding keyframes functionality."
+    },
+    {
+      "id": 274,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Server.Tests/Jellyfin.Server.Tests.csproj",
+      "value": "AutoFixture",
+      "confidence": 0.5,
+      "notes": "Test dependency for generating test data and mock objects"
+    },
+    {
+      "id": 276,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Server.Tests/Jellyfin.Server.Tests.csproj",
+      "value": "AutoFixture.Xunit3",
+      "confidence": 0.5,
+      "notes": "Provides integration with xUnit 3 for test fixture setup"
+    },
+    {
+      "id": 277,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Server.Tests/Jellyfin.Server.Tests.csproj",
+      "value": "Microsoft.AspNetCore.Mvc.Testing",
+      "confidence": 0.5,
+      "notes": "Used for testing ASP.NET Core MVC endpoints"
+    },
+    {
+      "id": 278,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Server.Tests/Jellyfin.Server.Tests.csproj",
+      "value": "Microsoft.NET.Test.Sdk",
+      "confidence": 0.5,
+      "notes": "Supports .NET test framework and test execution"
+    },
+    {
+      "id": 279,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Server.Tests/Jellyfin.Server.Tests.csproj",
+      "value": "xunit.v3",
+      "confidence": 0.5,
+      "notes": "Core xUnit 3 testing framework"
+    },
+    {
+      "id": 280,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Server.Tests/Jellyfin.Server.Tests.csproj",
+      "value": "xunit.runner.visualstudio",
+      "confidence": 0.5,
+      "notes": "Visual Studio integration for xUnit test execution"
+    },
+    {
+      "id": 281,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Server.Tests/Jellyfin.Server.Tests.csproj",
+      "value": "coverlet.collector",
+      "confidence": 0.5,
+      "notes": "Used for collecting coverage data during test execution"
+    },
+    {
+      "id": 283,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Server.Tests/Jellyfin.Server.Tests.csproj",
+      "value": "Jellyfin.Server",
+      "confidence": 0.5,
+      "notes": "Reference to the main server project for test integration"
+    },
+    {
+      "id": 289,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Model.Tests/Jellyfin.Model.Tests.csproj",
+      "value": "FsCheck.Xunit.v3",
+      "confidence": 0.5,
+      "notes": "Property-based testing library integrated with xunit"
+    },
+    {
+      "id": 293,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Database/Jellyfin.Database.Providers.Sqlite/Jellyfin.Database.Providers.Sqlite.csproj",
+      "value": "Microsoft.EntityFrameworkCore.Sqlite",
+      "confidence": 0.5,
+      "notes": "Required for SQLite database operations in the Jellyfin database provider"
+    },
+    {
+      "id": 297,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.Database/Jellyfin.Database.Providers.Sqlite/Jellyfin.Database.Providers.Sqlite.csproj",
+      "value": "MediaBrowser.Common",
+      "confidence": 0.5,
+      "notes": "Shared common codebase used by the database provider"
+    },
+    {
+      "id": 301,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.LiveTv/Jellyfin.LiveTv.csproj",
+      "value": "Jellyfin.XmlTv",
+      "confidence": 0.5,
+      "notes": "A package reference indicating a dependency on the Jellyfin.XmlTv library"
+    },
+    {
+      "id": 311,
+      "category": "dependency",
+      "source_file": "tests/Jellyfin.Extensions.Tests/Jellyfin.Extensions.Tests.csproj",
+      "value": "Jellyfin.Extensions",
+      "confidence": 0.5,
+      "notes": "Extension library referenced for test implementation"
+    },
+    {
+      "id": 349,
+      "category": "dependency",
+      "source_file": "fuzz/Jellyfin.Api.Fuzz/Jellyfin.Api.Fuzz.csproj",
+      "value": "Jellyfin.Api",
+      "confidence": 0.5,
+      "notes": "Direct reference to Jellyfin.Api.dll, indicating dependency on the Jellyfin API component"
+    },
+    {
+      "id": 352,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.CodeAnalysis/Jellyfin.CodeAnalysis.csproj",
+      "value": "Microsoft.CodeAnalysis.CSharp",
+      "confidence": 0.5,
+      "notes": "Required for C# code analysis and syntax processing in the project"
+    },
+    {
+      "id": 353,
+      "category": "dependency",
+      "source_file": "src/Jellyfin.CodeAnalysis/Jellyfin.CodeAnalysis.csproj",
+      "value": "Microsoft.CodeAnalysis.Analyzers",
+      "confidence": 0.5,
+      "notes": "Provides code analysis rules and diagnostics for C# code"
+    }
+  ]
+}

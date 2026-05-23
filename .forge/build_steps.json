@@ -1,0 +1,145 @@
+{
+  "_meta": {
+    "generated_at": "2026-05-23T14:02:39.710726+00:00",
+    "source_slug": "jellyfin",
+    "phase": "deep_analysis"
+  },
+  "findings": [
+    {
+      "id": 46,
+      "category": "build_step",
+      "source_file": "Jellyfin.Server/Helpers/StartupHelpers.cs",
+      "value": "CreateApplicationPaths",
+      "confidence": 0.95,
+      "notes": "Method responsible for determining and normalizing application paths based on command-line and environment inputs"
+    },
+    {
+      "id": 25,
+      "category": "build_step",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen4-4K-5.1.json",
+      "value": "TranscodingProfiles",
+      "confidence": 0.75,
+      "notes": "Configurations for transcoding profiles may influence build-time media processing logic in Snap"
+    },
+    {
+      "id": 35,
+      "category": "build_step",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen3-stereo.json",
+      "value": "None specified",
+      "confidence": 0.75,
+      "notes": "No build-time instructions or dependencies defined in this configuration file"
+    },
+    {
+      "id": 72,
+      "category": "build_step",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-WebOS-23.json",
+      "value": "transcoding profile generation",
+      "confidence": 0.75,
+      "notes": "Build or runtime step may involve generating transcoding rules based on this profile for media handling."
+    },
+    {
+      "id": 163,
+      "category": "build_step",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_webm.json",
+      "value": "probe media streams",
+      "confidence": 0.75,
+      "notes": "Build-time step to validate media stream properties (video/audio codecs, resolution, sample rate) during testing."
+    },
+    {
+      "id": 222,
+      "category": "build_step",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_interlaced.json",
+      "value": "probing",
+      "confidence": 0.75,
+      "notes": "Probing step for validating interlaced video stream properties during build or test phase"
+    },
+    {
+      "id": 256,
+      "category": "build_step",
+      "source_file": "Jellyfin.Server/Resources/Configuration/logging.json",
+      "value": "logging.json",
+      "confidence": 0.75,
+      "notes": "This configuration may be included in the build step to ensure logging is properly initialized during Snap package startup"
+    },
+    {
+      "id": 329,
+      "category": "build_step",
+      "source_file": ".vscode/tasks.json",
+      "value": "build",
+      "confidence": 0.75,
+      "notes": "The 'build' task runs the dotnet build command on the Jellyfin.Server.csproj, which is a key build step in the development workflow."
+    },
+    {
+      "id": 330,
+      "category": "build_step",
+      "source_file": ".vscode/tasks.json",
+      "value": "test",
+      "confidence": 0.75,
+      "notes": "The 'api tests' task runs dotnet test on the Jellyfin.Api.Tests.csproj, indicating a test build step for API components."
+    },
+    {
+      "id": 398,
+      "category": "build_step",
+      "source_file": "fuzz/Jellyfin.Api.Fuzz/fuzz.sh",
+      "value": "dotnet build",
+      "confidence": 0.75,
+      "notes": "Performs a default build step, possibly for rebuilding dependencies or generating additional artifacts"
+    },
+    {
+      "id": 18,
+      "category": "build_step",
+      "source_file": "Jellyfin.Server/Program.cs",
+      "value": "StartupHelpers.InitLoggingConfigFile",
+      "confidence": 0.5,
+      "notes": "Initializes logging configuration based on environment and application-specific settings, including fallbacks to default and system-specific logging files."
+    },
+    {
+      "id": 106,
+      "category": "build_step",
+      "source_file": "Jellyfin.Server/Extensions/WebHostBuilderExtensions.cs",
+      "value": "SetupJellyfinWebServer",
+      "confidence": 0.5,
+      "notes": "Configures Kestrel to listen on specific IP addresses and ports, with support for Unix socket on Unix systems."
+    },
+    {
+      "id": 249,
+      "category": "build_step",
+      "source_file": "Jellyfin.Server.Implementations/Jellyfin.Server.Implementations.csproj",
+      "value": "GenerateDocumentationFile",
+      "confidence": 0.5,
+      "notes": "Enables generation of XML documentation files for the assembly"
+    },
+    {
+      "id": 250,
+      "category": "build_step",
+      "source_file": "Jellyfin.Server.Implementations/Jellyfin.Server.Implementations.csproj",
+      "value": "GenerateAssemblyInfo",
+      "confidence": 0.5,
+      "notes": "Disabled, meaning no assembly-level metadata is generated"
+    },
+    {
+      "id": 265,
+      "category": "build_step",
+      "source_file": "src/Jellyfin.Drawing.Skia/Jellyfin.Drawing.Skia.csproj",
+      "value": "net10.0",
+      "confidence": 0.5,
+      "notes": "Targets .NET 10.0, indicating the runtime version required for compilation"
+    },
+    {
+      "id": 292,
+      "category": "build_step",
+      "source_file": "tests/Jellyfin.Model.Tests/Jellyfin.Model.Tests.csproj",
+      "value": "Copy Test Data",
+      "confidence": 0.5,
+      "notes": "Test data files are preserved and copied to output directory"
+    },
+    {
+      "id": 356,
+      "category": "build_step",
+      "source_file": "src/Jellyfin.CodeAnalysis/Jellyfin.CodeAnalysis.csproj",
+      "value": "EnforceExtendedAnalyzerRules",
+      "confidence": 0.5,
+      "notes": "Configures the build to enforce additional code analysis rules, impacting code quality and validation in snap builds"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "_meta": {
+    "generated_at": "2026-05-23T14:02:39.710726+00:00",
+    "source_slug": "jellyfin",
+    "phase": "deep_analysis"
+  },
+  "findings": [
+    {
+      "id": 34,
+      "category": "volume",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen3-stereo.json",
+      "value": "None specified",
+      "confidence": 0.75,
+      "notes": "No volume mount or data persistence configuration present"
+    },
+    {
+      "id": 162,
+      "category": "volume",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_webm.json",
+      "value": "test-data",
+      "confidence": 0.75,
+      "notes": "Implied volume mount for test data, as this file is part of a test suite for media encoding."
+    },
+    {
+      "id": 221,
+      "category": "volume",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_interlaced.json",
+      "value": "test-gray.720i.mp4",
+      "confidence": 0.75,
+      "notes": "Test video file name indicating a volume or test dataset for interlaced 720i content"
+    },
+    {
+      "id": 399,
+      "category": "volume",
+      "source_file": "fuzz/Jellyfin.Api.Fuzz/fuzz.sh",
+      "value": "Testcases/$1",
+      "confidence": 0.75,
+      "notes": "Input directory for test cases, dynamically resolved based on the first argument"
+    },
+    {
+      "id": 400,
+      "category": "volume",
+      "source_file": "fuzz/Jellyfin.Api.Fuzz/fuzz.sh",
+      "value": "Findings/$1",
+      "confidence": 0.75,
+      "notes": "Output directory for fuzzing results, dynamically resolved based on the first argument"
+    },
+    {
+      "id": 377,
+      "category": "volume",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/Testcases/PathExtensions.TryReplaceSubPath/test1.txt",
+      "value": "/home/bond/dev/jellyfin/",
+      "confidence": 0.6,
+      "notes": "Indicates a potential volume mount point in a container or snap setup, where local development path is mapped to the container."
+    },
+    {
+      "id": 378,
+      "category": "volume",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/Testcases/PathExtensions.TryReplaceSubPath/test1.txt",
+      "value": "/srv/jellyfin/",
+      "confidence": 0.6,
+      "notes": "Suggests a system or service directory where Jellyfin might be installed or served, possibly a volume mount in a snap or container."
+    }
+  ]
+}

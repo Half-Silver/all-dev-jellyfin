@@ -1,0 +1,206 @@
+app:
+  name: all-dev-jellyfin
+  version: "1.0.0"
+
+description: "Jellyfin is a free, open-source media server that supports transcoding, live TV, and device-specific profiles. It provides a web-based UI for managing media libraries, user accounts, and device settings. The snap runs as a background service with strict confinement, allowing secure access to media files and network services. It supports multiple device profiles (e.g., Tizen, WebOS, Android) and can be configured via environment variables for data and configuration paths."
+
+# CT Engine settings
+run:
+  command: "$SNAP/bin/jellyfin --config $SNAP_DATA/config --data $SNAP_DATA/data --log $SNAP_DATA/logs --webdir $SNAP_DATA/web --cachedir $SNAP_DATA/cache --port 19080 --service"
+
+
+# Callbacks / Output
+output:
+  mode: "logs"
+  interval: 60
+  initial_event: "message_initial"
+  periodic_event: "message"
+
+# Configuration Schema
+config:
+
+  example-param:
+    visibility: user
+    required: true
+    type: string
+
+    default: "default-value"
+
+
+    description: "An example parameter"
+
+
+  port:
+    visibility: user
+    required: true
+    type: number
+
+    default: 19080
+
+
+    description: "The port the Jellyfin server listens on for HTTP traffic."
+
+
+  ct-callback-url:
+    visibility: ct
+    required: false
+    type: string
+
+
+    description: "URL to which Control Tower sends callbacks for state updates."
+
+
+  ct-snap-name:
+    visibility: ct
+    required: false
+    type: string
+
+
+    description: "The name of the snap as registered in the Control Tower."
+
+
+  ct-node-id:
+    visibility: ct
+    required: false
+    type: string
+
+
+    description: "Unique identifier for the node in the Control Tower cluster."
+
+
+  ct-deployment-id:
+    visibility: ct
+    required: false
+    type: string
+
+
+    description: "Deployment ID assigned by Control Tower for this snap instance."
+
+
+  JELLYFIN_DATA_DIR:
+    visibility: user
+    required: false
+    type: string
+
+    default: "/var/lib/jellyfin"
+
+
+    description: "Directory for storing application data (metadata, media files)."
+
+
+  JELLYFIN_CONFIG_DIR:
+    visibility: user
+    required: false
+    type: string
+
+    default: "/etc/jellyfin"
+
+
+    description: "Directory for storing configuration files."
+
+
+  JELLYFIN_CACHE_DIR:
+    visibility: user
+    required: false
+    type: string
+
+    default: "/var/cache/jellyfin"
+
+
+    description: "Directory for storing cache data (transcoded files)."
+
+
+  JELLYFIN_WEB_DIR:
+    visibility: user
+    required: false
+    type: string
+
+    default: "/var/www/jellyfin"
+
+
+    description: "Directory for storing web UI resources (CSS, JS, images)."
+
+
+  JELLYFIN_LOG_DIR:
+    visibility: user
+    required: false
+    type: string
+
+    default: "/var/log/jellyfin"
+
+
+    description: "Directory for storing application logs."
+
+
+  JELLYFIN_DEVICE_PROFILE:
+    visibility: user
+    required: false
+    type: string
+
+    default: "default"
+
+
+    description: "Device-specific profile (e.g., Tizen, WebOS, Android) to configure media handling."
+
+
+  LANGUAGE:
+    visibility: user
+    required: false
+    type: string
+
+    default: "en"
+
+
+    description: "Language code for UI localization (e.g., 'sk' for Slovak)."
+
+
+  MAX_STREAMING_BITRATE:
+    visibility: user
+    required: false
+    type: number
+
+    default: 120000000
+
+
+    description: "Maximum bitrate (in bits per second) for streaming media."
+
+
+  MAX_STATIC_BITRATE:
+    visibility: user
+    required: false
+    type: number
+
+    default: 100000000
+
+
+    description: "Maximum bitrate (in bits per second) for static media playback."
+
+
+  HTTP_PROXY:
+    visibility: user
+    required: false
+    type: string
+
+
+    description: "Proxy URL for accessing live TV channels."
+
+
+  DEVICE_ID:
+    visibility: user
+    required: false
+    type: string
+
+
+    description: "Device ID used for authentication or device-specific features."
+
+
+  DEVICE_AUTH:
+    visibility: user
+    required: false
+    type: string
+
+
+    description: "Device authentication token."
+
+
+

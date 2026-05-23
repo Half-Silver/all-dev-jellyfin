@@ -1,0 +1,170 @@
+{
+  "_meta": {
+    "generated_at": "2026-05-23T14:02:39.710726+00:00",
+    "source_slug": "jellyfin",
+    "phase": "deep_analysis"
+  },
+  "slug": "jellyfin",
+  "source_url": "https://github.com/jellyfin/jellyfin.git",
+  "source_branch": "",
+  "clone_path": ".all-forge/sessions/jellyfin/source",
+  "recipe": {
+    "project_type": "C#/.NET",
+    "build_packages": [
+      "dotnet-sdk",
+      "libavcodec-dev",
+      "libavformat-dev",
+      "libavutil-dev",
+      "libglib2.0-0-dev",
+      "ffmpeg",
+      "curl",
+      "libxslt1.1",
+      "libffi8",
+      "libssl-dev",
+      "libxslt1-dev",
+      "libffi-dev"
+    ],
+    "stage_packages": [
+      "ca-certificates",
+      "libavcodec",
+      "libavformat",
+      "libavutil",
+      "libglib2.0-0",
+      "ffmpeg",
+      "curl",
+      "libxslt1.1"
+    ],
+    "run_commands": [
+      "$SNAP/bin/jellyfin --config $SNAP_DATA/config --data $SNAP_DATA/data --log $SNAP_DATA/logs --webdir $SNAP_DATA/web --cachedir $SNAP_DATA/cache --port 19080 --service"
+    ],
+    "build_commands": [
+      "dotnet build --no-restore --configuration Release",
+      "cp $SNAPCRAFT_PART_INSTALL/bin/jellyfin $SNAP/bin/jellyfin"
+    ],
+    "requires_manual_review": false,
+    "auto_profile": {
+      "app_version": "1.0.0",
+      "summary": "A media server for streaming and transcoding audio and video content across devices.",
+      "description": "Jellyfin is a free, open-source media server that supports transcoding, live TV, and device-specific profiles. It provides a web-based UI for managing media libraries, user accounts, and device settings. The snap runs as a background service with strict confinement, allowing secure access to media files and network services. It supports multiple device profiles (e.g., Tizen, WebOS, Android) and can be configured via environment variables for data and configuration paths.",
+      "plugs": [
+        "network",
+        "network-bind",
+        "home"
+      ],
+      "config_schema": {
+        "port": {
+          "visibility": "user",
+          "required": true,
+          "type": "number",
+          "default": 19080,
+          "description": "The port the Jellyfin server listens on for HTTP traffic."
+        },
+        "ct-callback-url": {
+          "visibility": "ct",
+          "type": "string",
+          "required": false,
+          "description": "URL to which Control Tower sends callbacks for state updates."
+        },
+        "ct-snap-name": {
+          "visibility": "ct",
+          "type": "string",
+          "required": false,
+          "description": "The name of the snap as registered in the Control Tower."
+        },
+        "ct-node-id": {
+          "visibility": "ct",
+          "type": "string",
+          "required": false,
+          "description": "Unique identifier for the node in the Control Tower cluster."
+        },
+        "ct-deployment-id": {
+          "visibility": "ct",
+          "type": "string",
+          "required": false,
+          "description": "Deployment ID assigned by Control Tower for this snap instance."
+        },
+        "JELLYFIN_DATA_DIR": {
+          "visibility": "user",
+          "type": "string",
+          "required": false,
+          "default": "/var/lib/jellyfin",
+          "description": "Directory for storing application data (metadata, media files)."
+        },
+        "JELLYFIN_CONFIG_DIR": {
+          "visibility": "user",
+          "type": "string",
+          "required": false,
+          "default": "/etc/jellyfin",
+          "description": "Directory for storing configuration files."
+        },
+        "JELLYFIN_CACHE_DIR": {
+          "visibility": "user",
+          "type": "string",
+          "required": false,
+          "default": "/var/cache/jellyfin",
+          "description": "Directory for storing cache data (transcoded files)."
+        },
+        "JELLYFIN_WEB_DIR": {
+          "visibility": "user",
+          "type": "string",
+          "required": false,
+          "default": "/var/www/jellyfin",
+          "description": "Directory for storing web UI resources (CSS, JS, images)."
+        },
+        "JELLYFIN_LOG_DIR": {
+          "visibility": "user",
+          "type": "string",
+          "required": false,
+          "default": "/var/log/jellyfin",
+          "description": "Directory for storing application logs."
+        },
+        "JELLYFIN_DEVICE_PROFILE": {
+          "visibility": "user",
+          "type": "string",
+          "required": false,
+          "default": "default",
+          "description": "Device-specific profile (e.g., Tizen, WebOS, Android) to configure media handling."
+        },
+        "LANGUAGE": {
+          "visibility": "user",
+          "type": "string",
+          "required": false,
+          "default": "en",
+          "description": "Language code for UI localization (e.g., 'sk' for Slovak)."
+        },
+        "MAX_STREAMING_BITRATE": {
+          "visibility": "user",
+          "type": "number",
+          "required": false,
+          "default": 120000000,
+          "description": "Maximum bitrate (in bits per second) for streaming media."
+        },
+        "MAX_STATIC_BITRATE": {
+          "visibility": "user",
+          "type": "number",
+          "required": false,
+          "default": 100000000,
+          "description": "Maximum bitrate (in bits per second) for static media playback."
+        },
+        "HTTP_PROXY": {
+          "visibility": "user",
+          "type": "string",
+          "required": false,
+          "description": "Proxy URL for accessing live TV channels."
+        },
+        "DEVICE_ID": {
+          "visibility": "user",
+          "type": "string",
+          "required": false,
+          "description": "Device ID used for authentication or device-specific features."
+        },
+        "DEVICE_AUTH": {
+          "visibility": "user",
+          "type": "string",
+          "required": false,
+          "description": "Device authentication token."
+        }
+      }
+    }
+  }
+}

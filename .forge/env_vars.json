@@ -1,0 +1,273 @@
+{
+  "_meta": {
+    "generated_at": "2026-05-23T14:02:39.710726+00:00",
+    "source_slug": "jellyfin",
+    "phase": "deep_analysis"
+  },
+  "findings": [
+    {
+      "id": 37,
+      "category": "env_var",
+      "source_file": "Jellyfin.Server/Helpers/StartupHelpers.cs",
+      "value": "JELLYFIN_DATA_DIR",
+      "confidence": 0.95,
+      "notes": "Environment variable used to specify the data directory path, overrides default behavior for storing application data"
+    },
+    {
+      "id": 38,
+      "category": "env_var",
+      "source_file": "Jellyfin.Server/Helpers/StartupHelpers.cs",
+      "value": "JELLYFIN_CONFIG_DIR",
+      "confidence": 0.95,
+      "notes": "Environment variable used to specify the configuration directory path, overrides default configuration location"
+    },
+    {
+      "id": 39,
+      "category": "env_var",
+      "source_file": "Jellyfin.Server/Helpers/StartupHelpers.cs",
+      "value": "JELLYFIN_CACHE_DIR",
+      "confidence": 0.95,
+      "notes": "Environment variable used to specify the cache directory path, overrides default cache storage location"
+    },
+    {
+      "id": 40,
+      "category": "env_var",
+      "source_file": "Jellyfin.Server/Helpers/StartupHelpers.cs",
+      "value": "JELLYFIN_WEB_DIR",
+      "confidence": 0.95,
+      "notes": "Environment variable used to specify the web resources directory path, overrides default web resources location"
+    },
+    {
+      "id": 41,
+      "category": "env_var",
+      "source_file": "Jellyfin.Server/Helpers/StartupHelpers.cs",
+      "value": "JELLYFIN_LOG_DIR",
+      "confidence": 0.95,
+      "notes": "Environment variable used to specify the log directory path, overrides default logging location"
+    },
+    {
+      "id": 24,
+      "category": "env_var",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen4-4K-5.1.json",
+      "value": "JELLYFIN_DEVICE_PROFILE",
+      "confidence": 0.75,
+      "notes": "Potential environment variable used to load this device-specific profile in Snap runtime"
+    },
+    {
+      "id": 33,
+      "category": "env_var",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen3-stereo.json",
+      "value": "None specified",
+      "confidence": 0.75,
+      "notes": "No environment variables defined in the configuration file"
+    },
+    {
+      "id": 85,
+      "category": "env_var",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Chrome.json",
+      "value": "MaxStreamingBitrate",
+      "confidence": 0.75,
+      "notes": "Configurable bitrate limit (120MB/s) indicating potential runtime environment variable or system-level media quality constraints."
+    },
+    {
+      "id": 86,
+      "category": "env_var",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Chrome.json",
+      "value": "MaxStaticBitrate",
+      "confidence": 0.75,
+      "notes": "Configurable bitrate limit (100MB/s) for static media, suggesting runtime environment constraints for non-streaming playback."
+    },
+    {
+      "id": 95,
+      "category": "env_var",
+      "source_file": "Emby.Server.Implementations/Localization/Core/sk.json",
+      "value": "LANGUAGE",
+      "confidence": 0.75,
+      "notes": "May be set to 'sk' to load Slovak localization in Snap environment"
+    },
+    {
+      "id": 128,
+      "category": "env_var",
+      "source_file": "Emby.Server.Implementations/Localization/Core/ms.json",
+      "value": "AppDeviceValues",
+      "confidence": 0.75,
+      "notes": "Localization key used in dynamic UI strings, may be referenced in snap environment variables for UI rendering"
+    },
+    {
+      "id": 138,
+      "category": "env_var",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-RokuSSPlus.json",
+      "value": "MaxStreamingBitrate: 120000000",
+      "confidence": 0.75,
+      "notes": "Configurable bitrate limit for streaming, which may influence Snap's resource allocation and performance tuning."
+    },
+    {
+      "id": 139,
+      "category": "env_var",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-RokuSSPlus.json",
+      "value": "MaxStaticBitrate: 100000000",
+      "confidence": 0.75,
+      "notes": "Static bitrate cap for non-streaming media, relevant for Snap's media processing and resource management."
+    },
+    {
+      "id": 161,
+      "category": "env_var",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_webm.json",
+      "value": "JELLYFIN_TEST_DATA",
+      "confidence": 0.75,
+      "notes": "Potential environment variable for test data loading, though not explicitly defined in the file."
+    },
+    {
+      "id": 219,
+      "category": "env_var",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_interlaced.json",
+      "value": "FORMAT_NAME",
+      "confidence": 0.75,
+      "notes": "Potential environment variable for handling video format (mov,mp4,m4a,3gp,3g2,mj2) in media processing"
+    },
+    {
+      "id": 238,
+      "category": "env_var",
+      "source_file": ".vscode/launch.json",
+      "value": "DOTNET_CLI_TELEMETRY_OPTOUT",
+      "confidence": 0.75,
+      "notes": "Environment variable set to disable CLI telemetry during debugging"
+    },
+    {
+      "id": 332,
+      "category": "env_var",
+      "source_file": "Jellyfin.Server/Properties/launchSettings.json",
+      "value": "ASPNETCORE_ENVIRONMENT",
+      "confidence": 0.75,
+      "notes": "Set to 'Development' in all profiles, indicating the application is running in development mode."
+    },
+    {
+      "id": 364,
+      "category": "env_var",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/lineup.json",
+      "value": "HTTP_PROXY",
+      "confidence": 0.75,
+      "notes": "Potential proxy environment variable for accessing live TV channels"
+    },
+    {
+      "id": 366,
+      "category": "env_var",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/SchedulesDirect/token_live_response.json",
+      "value": "token",
+      "confidence": 0.75,
+      "notes": "Contains a token value used for authentication with SchedulesDirect, likely for live TV data access."
+    },
+    {
+      "id": 373,
+      "category": "env_var",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/fuzz.sh",
+      "value": "AFL_SKIP_BIN_CHECK=1",
+      "confidence": 0.75,
+      "notes": "Environment variable to skip binary check during AFL fuzzing, preventing potential false negatives"
+    },
+    {
+      "id": 390,
+      "category": "env_var",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/discover.json",
+      "value": "DEVICE_ID",
+      "confidence": 0.75,
+      "notes": "DeviceID value (FFFFFFFF) may be used in configuration or authentication logic within the snap"
+    },
+    {
+      "id": 391,
+      "category": "env_var",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/discover.json",
+      "value": "DEVICE_AUTH",
+      "confidence": 0.75,
+      "notes": "DeviceAuth value (FFFFFFFF) may be used for device authentication or authorization in the snap's service"
+    },
+    {
+      "id": 376,
+      "category": "env_var",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/Testcases/PathExtensions.TryReplaceSubPath/test1.txt",
+      "value": "PATH",
+      "confidence": 0.6,
+      "notes": "The file contains a path-like structure suggesting environment variable usage, possibly for path resolution in a container or snap environment."
+    },
+    {
+      "id": 7,
+      "category": "env_var",
+      "source_file": "Jellyfin.Server.Implementations/FullSystemBackup/BackupService.cs",
+      "value": "JELLYFIN_BACKUP_PATH",
+      "confidence": 0.5,
+      "notes": "Potential environment variable used to specify backup paths, though not explicitly defined in the file; may be used by surrounding configuration."
+    },
+    {
+      "id": 11,
+      "category": "env_var",
+      "source_file": "Jellyfin.Server/Program.cs",
+      "value": "NEOReadDebugKeys",
+      "confidence": 0.5,
+      "notes": "Environment variable set to '1' to enable Intel VAAPI tonemapping features for hardware acceleration."
+    },
+    {
+      "id": 12,
+      "category": "env_var",
+      "source_file": "Jellyfin.Server/Program.cs",
+      "value": "EnableExtendedVaFormats",
+      "confidence": 0.5,
+      "notes": "Environment variable set to '1' to enable extended VAAPI formats for better media playback support."
+    },
+    {
+      "id": 74,
+      "category": "env_var",
+      "source_file": "src/Jellyfin.Extensions/StringExtensions.cs",
+      "value": "JELLYFIN_TRANSLITERATOR_ID",
+      "confidence": 0.5,
+      "notes": "Environment variable used to configure the transliterator behavior in StringExtensions via Lazy initialization"
+    },
+    {
+      "id": 107,
+      "category": "env_var",
+      "source_file": "Jellyfin.Server/Extensions/WebHostBuilderExtensions.cs",
+      "value": "JELLYFIN_HTTP_PORT",
+      "confidence": 0.5,
+      "notes": "Indirectly inferred from httpPort usage; may be used in configuration to set HTTP port."
+    },
+    {
+      "id": 108,
+      "category": "env_var",
+      "source_file": "Jellyfin.Server/Extensions/WebHostBuilderExtensions.cs",
+      "value": "JELLYFIN_HTTPS_PORT",
+      "confidence": 0.5,
+      "notes": "Indirectly inferred from httpsPort usage; may be used to enable HTTPS with certificate."
+    },
+    {
+      "id": 109,
+      "category": "env_var",
+      "source_file": "Jellyfin.Server/Extensions/WebHostBuilderExtensions.cs",
+      "value": "JELLYFIN_USE_UNIX_SOCKET",
+      "confidence": 0.5,
+      "notes": "Indirectly inferred from startupConfig.UseUnixSocket(); controls Unix socket binding."
+    },
+    {
+      "id": 169,
+      "category": "env_var",
+      "source_file": "src/Jellyfin.MediaEncoding.Keyframes/FfProbe/FfProbeKeyframeExtractor.cs",
+      "value": "FFPROBE_PATH",
+      "confidence": 0.5,
+      "notes": "Potential environment variable to override the path to ffprobe, though not explicitly defined in the code; may be used in packaging for flexibility."
+    },
+    {
+      "id": 205,
+      "category": "env_var",
+      "source_file": "MediaBrowser.Providers/Plugins/StudioImages/Configuration/config.html",
+      "value": "RepositoryUrl",
+      "confidence": 0.5,
+      "notes": "Configuration field used to store and update the Jellyfin-compatible artwork repository URL."
+    },
+    {
+      "id": 227,
+      "category": "env_var",
+      "source_file": "MediaBrowser.Providers/Plugins/AudioDb/Configuration/config.html",
+      "value": "pluginId",
+      "confidence": 0.5,
+      "notes": "Configuration property passed via JavaScript to identify the plugin (a629c0da-fac5-4c7e-931a-7174223f14c8) for API communication."
+    }
+  ]
+}

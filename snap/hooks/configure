@@ -1,0 +1,167 @@
+#!/bin/sh -e
+
+# This hook runs when the snap is configured.
+# It reads settings from 'snapctl get' and applies them.
+
+
+# An example parameter
+VALUE=$(snapctl get example-param)
+if [ -z "$VALUE" ]; then
+  VALUE="default-value"
+fi
+echo "Setting example-param=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "example-param=$VALUE" >> $SNAP_COMMON/config.env
+
+# The port the Jellyfin server listens on for HTTP traffic.
+VALUE=$(snapctl get port)
+if [ -z "$VALUE" ]; then
+  VALUE="19080"
+fi
+echo "Setting port=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "port=$VALUE" >> $SNAP_COMMON/config.env
+
+# URL to which Control Tower sends callbacks for state updates.
+VALUE=$(snapctl get ct-callback-url)
+if [ -z "$VALUE" ]; then
+  VALUE=""
+fi
+echo "Setting ct-callback-url=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "ct-callback-url=$VALUE" >> $SNAP_COMMON/config.env
+
+# The name of the snap as registered in the Control Tower.
+VALUE=$(snapctl get ct-snap-name)
+if [ -z "$VALUE" ]; then
+  VALUE=""
+fi
+echo "Setting ct-snap-name=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "ct-snap-name=$VALUE" >> $SNAP_COMMON/config.env
+
+# Unique identifier for the node in the Control Tower cluster.
+VALUE=$(snapctl get ct-node-id)
+if [ -z "$VALUE" ]; then
+  VALUE=""
+fi
+echo "Setting ct-node-id=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "ct-node-id=$VALUE" >> $SNAP_COMMON/config.env
+
+# Deployment ID assigned by Control Tower for this snap instance.
+VALUE=$(snapctl get ct-deployment-id)
+if [ -z "$VALUE" ]; then
+  VALUE=""
+fi
+echo "Setting ct-deployment-id=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "ct-deployment-id=$VALUE" >> $SNAP_COMMON/config.env
+
+# Directory for storing application data (metadata, media files).
+VALUE=$(snapctl get JELLYFIN_DATA_DIR)
+if [ -z "$VALUE" ]; then
+  VALUE="/var/lib/jellyfin"
+fi
+echo "Setting JELLYFIN_DATA_DIR=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "JELLYFIN_DATA_DIR=$VALUE" >> $SNAP_COMMON/config.env
+
+# Directory for storing configuration files.
+VALUE=$(snapctl get JELLYFIN_CONFIG_DIR)
+if [ -z "$VALUE" ]; then
+  VALUE="/etc/jellyfin"
+fi
+echo "Setting JELLYFIN_CONFIG_DIR=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "JELLYFIN_CONFIG_DIR=$VALUE" >> $SNAP_COMMON/config.env
+
+# Directory for storing cache data (transcoded files).
+VALUE=$(snapctl get JELLYFIN_CACHE_DIR)
+if [ -z "$VALUE" ]; then
+  VALUE="/var/cache/jellyfin"
+fi
+echo "Setting JELLYFIN_CACHE_DIR=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "JELLYFIN_CACHE_DIR=$VALUE" >> $SNAP_COMMON/config.env
+
+# Directory for storing web UI resources (CSS, JS, images).
+VALUE=$(snapctl get JELLYFIN_WEB_DIR)
+if [ -z "$VALUE" ]; then
+  VALUE="/var/www/jellyfin"
+fi
+echo "Setting JELLYFIN_WEB_DIR=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "JELLYFIN_WEB_DIR=$VALUE" >> $SNAP_COMMON/config.env
+
+# Directory for storing application logs.
+VALUE=$(snapctl get JELLYFIN_LOG_DIR)
+if [ -z "$VALUE" ]; then
+  VALUE="/var/log/jellyfin"
+fi
+echo "Setting JELLYFIN_LOG_DIR=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "JELLYFIN_LOG_DIR=$VALUE" >> $SNAP_COMMON/config.env
+
+# Device-specific profile (e.g., Tizen, WebOS, Android) to configure media handling.
+VALUE=$(snapctl get JELLYFIN_DEVICE_PROFILE)
+if [ -z "$VALUE" ]; then
+  VALUE="default"
+fi
+echo "Setting JELLYFIN_DEVICE_PROFILE=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "JELLYFIN_DEVICE_PROFILE=$VALUE" >> $SNAP_COMMON/config.env
+
+# Language code for UI localization (e.g., 'sk' for Slovak).
+VALUE=$(snapctl get LANGUAGE)
+if [ -z "$VALUE" ]; then
+  VALUE="en"
+fi
+echo "Setting LANGUAGE=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "LANGUAGE=$VALUE" >> $SNAP_COMMON/config.env
+
+# Maximum bitrate (in bits per second) for streaming media.
+VALUE=$(snapctl get MAX_STREAMING_BITRATE)
+if [ -z "$VALUE" ]; then
+  VALUE="120000000"
+fi
+echo "Setting MAX_STREAMING_BITRATE=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "MAX_STREAMING_BITRATE=$VALUE" >> $SNAP_COMMON/config.env
+
+# Maximum bitrate (in bits per second) for static media playback.
+VALUE=$(snapctl get MAX_STATIC_BITRATE)
+if [ -z "$VALUE" ]; then
+  VALUE="100000000"
+fi
+echo "Setting MAX_STATIC_BITRATE=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "MAX_STATIC_BITRATE=$VALUE" >> $SNAP_COMMON/config.env
+
+# Proxy URL for accessing live TV channels.
+VALUE=$(snapctl get HTTP_PROXY)
+if [ -z "$VALUE" ]; then
+  VALUE=""
+fi
+echo "Setting HTTP_PROXY=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "HTTP_PROXY=$VALUE" >> $SNAP_COMMON/config.env
+
+# Device ID used for authentication or device-specific features.
+VALUE=$(snapctl get DEVICE_ID)
+if [ -z "$VALUE" ]; then
+  VALUE=""
+fi
+echo "Setting DEVICE_ID=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "DEVICE_ID=$VALUE" >> $SNAP_COMMON/config.env
+
+# Device authentication token.
+VALUE=$(snapctl get DEVICE_AUTH)
+if [ -z "$VALUE" ]; then
+  VALUE=""
+fi
+echo "Setting DEVICE_AUTH=$VALUE"
+# TODO: Write to your app's config file or environment
+# e.g., echo "DEVICE_AUTH=$VALUE" >> $SNAP_COMMON/config.env

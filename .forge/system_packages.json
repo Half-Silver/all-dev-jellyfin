@@ -1,0 +1,145 @@
+{
+  "_meta": {
+    "generated_at": "2026-05-23T14:02:39.710726+00:00",
+    "source_slug": "jellyfin",
+    "phase": "deep_analysis"
+  },
+  "findings": [
+    {
+      "id": 42,
+      "category": "system_package",
+      "source_file": "Jellyfin.Server/Helpers/StartupHelpers.cs",
+      "value": "Serilog",
+      "confidence": 0.95,
+      "notes": "Logging framework used for structured logging during server startup and runtime"
+    },
+    {
+      "id": 43,
+      "category": "system_package",
+      "source_file": "Jellyfin.Server/Helpers/StartupHelpers.cs",
+      "value": "Microsoft.Extensions.Logging",
+      "confidence": 0.95,
+      "notes": "Provides logging infrastructure for application startup and runtime diagnostics"
+    },
+    {
+      "id": 125,
+      "category": "system_package",
+      "source_file": "Jellyfin.Api/Controllers/StartupController.cs",
+      "value": "dotnet-sdk",
+      "confidence": 0.95,
+      "notes": "Required to build and run the C# code in Jellyfin.Api, which includes the StartupController."
+    },
+    {
+      "id": 26,
+      "category": "system_package",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen4-4K-5.1.json",
+      "value": "libavcodec, libavformat, libavutil",
+      "confidence": 0.75,
+      "notes": "Inferred system-level audio/video libraries required for transcoding and playback support"
+    },
+    {
+      "id": 96,
+      "category": "system_package",
+      "source_file": "Emby.Server.Implementations/Localization/Core/sk.json",
+      "value": "libglib2.0-0",
+      "confidence": 0.75,
+      "notes": "Likely dependency for localization and UI components in Snap"
+    },
+    {
+      "id": 114,
+      "category": "system_package",
+      "source_file": "Emby.Server.Implementations/Localization/Core/tr.json",
+      "value": "l10n",
+      "confidence": 0.75,
+      "notes": "System-level localization package may be required to support multi-language UIs, though not explicitly defined in file."
+    },
+    {
+      "id": 164,
+      "category": "system_package",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_webm.json",
+      "value": "ffmpeg",
+      "confidence": 0.75,
+      "notes": "Required for parsing WebM streams; system package needed to decode vp8 and vorbis streams."
+    },
+    {
+      "id": 367,
+      "category": "system_package",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/SchedulesDirect/token_live_response.json",
+      "value": "curl",
+      "confidence": 0.75,
+      "notes": "Implied dependency for making HTTP requests to SchedulesDirect API, though not explicitly stated in the file."
+    },
+    {
+      "id": 389,
+      "category": "system_package",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/discover.json",
+      "value": "hdhomerun3_cablecard",
+      "confidence": 0.75,
+      "notes": "Firmware version indicates the HDHomeRun 3 cable card firmware, relevant for device compatibility and dependency handling"
+    },
+    {
+      "id": 402,
+      "category": "system_package",
+      "source_file": ".config/dotnet-tools.json",
+      "value": "dotnet-ef",
+      "confidence": 0.75,
+      "notes": "The presence of dotnet-ef in the dotnet-tools.json suggests that the .NET SDK and related tools are expected to be installed or available in the runtime environment"
+    },
+    {
+      "id": 410,
+      "category": "system_package",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/10.10.10.100/discover.json",
+      "value": "hdhomerun",
+      "confidence": 0.75,
+      "notes": "The presence of HDHomeRun device implies a dependency on the hdhomerun system package for low-level device communication, which may need to be included in the snap's build or runtime dependencies."
+    },
+    {
+      "id": 8,
+      "category": "system_package",
+      "source_file": "Jellyfin.Server.Implementations/FullSystemBackup/BackupService.cs",
+      "value": "zip",
+      "confidence": 0.5,
+      "notes": "System-level package required to support ZIP file operations during backup and restore, especially for extraction and validation."
+    },
+    {
+      "id": 75,
+      "category": "system_package",
+      "source_file": "src/Jellyfin.Extensions/StringExtensions.cs",
+      "value": "ICU4N.Text",
+      "confidence": 0.5,
+      "notes": "Required for transliterator and Unicode processing functionality in the string extensions"
+    },
+    {
+      "id": 99,
+      "category": "system_package",
+      "source_file": "Jellyfin.Server/Extensions/WebHostBuilderExtensions.cs",
+      "value": "Microsoft.AspNetCore.Server.Kestrel.Core",
+      "confidence": 0.5,
+      "notes": "Required for Kestrel server configuration and handling of HTTP/HTTPS bindings."
+    },
+    {
+      "id": 100,
+      "category": "system_package",
+      "source_file": "Jellyfin.Server/Extensions/WebHostBuilderExtensions.cs",
+      "value": "Microsoft.Extensions.Hosting",
+      "confidence": 0.5,
+      "notes": "Used for the IWebHostBuilder and web host configuration pipeline."
+    },
+    {
+      "id": 101,
+      "category": "system_package",
+      "source_file": "Jellyfin.Server/Extensions/WebHostBuilderExtensions.cs",
+      "value": "Microsoft.Extensions.Configuration",
+      "confidence": 0.5,
+      "notes": "Used for reading application configuration (startupConfig)."
+    },
+    {
+      "id": 199,
+      "category": "system_package",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "net10.0",
+      "confidence": 0.5,
+      "notes": "Target framework version indicating runtime dependencies"
+    }
+  ]
+}

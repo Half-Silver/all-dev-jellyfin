@@ -1,0 +1,233 @@
+{
+  "_meta": {
+    "generated_at": "2026-05-23T14:02:39.710726+00:00",
+    "source_slug": "jellyfin",
+    "phase": "deep_analysis"
+  },
+  "findings": [
+    {
+      "id": 44,
+      "category": "service",
+      "source_file": "Jellyfin.Server/Helpers/StartupHelpers.cs",
+      "value": "Jellyfin.Server",
+      "confidence": 0.95,
+      "notes": "Main service entrypoint for the Jellyfin server, responsible for startup and configuration handling"
+    },
+    {
+      "id": 116,
+      "category": "service",
+      "source_file": "Jellyfin.Api/Controllers/StartupController.cs",
+      "value": "Jellyfin.Api",
+      "confidence": 0.95,
+      "notes": "The StartupController is part of the Jellyfin.Api service, which is responsible for handling API endpoints during the startup wizard process."
+    },
+    {
+      "id": 270,
+      "category": "service",
+      "source_file": "Emby.Server.Implementations/ScheduledTasks/Triggers/StartupTrigger.cs",
+      "value": "Emby.Server.Implementations.ScheduledTasks.Triggers.StartupTrigger",
+      "confidence": 0.95,
+      "notes": "This component is part of Emby's scheduled task system and is invoked during application startup, indicating it may be managed as a service component in the snap."
+    },
+    {
+      "id": 273,
+      "category": "service",
+      "source_file": "Emby.Server.Implementations/Sorting/StartDateComparer.cs",
+      "value": "Emby.Server",
+      "confidence": 0.95,
+      "notes": "The service that hosts the StartDateComparer implementation, likely part of the Emby media server's sorting and metadata handling system."
+    },
+    {
+      "id": 21,
+      "category": "service",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen4-4K-5.1.json",
+      "value": "Jellyfin",
+      "confidence": 0.75,
+      "notes": "Implies a service configuration for Jellyfin media server, likely managed via Snap with Tizen device integration"
+    },
+    {
+      "id": 30,
+      "category": "service",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen3-stereo.json",
+      "value": "Jellyfin Tizen 3 Stereo",
+      "confidence": 0.75,
+      "notes": "Device-specific service profile for Tizen 3 Stereo device, configuring media handling and streaming behavior"
+    },
+    {
+      "id": 50,
+      "category": "service",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-AndroidPixel.json",
+      "value": "Jellyfin Android",
+      "confidence": 0.75,
+      "notes": "Device profile name used to identify Android device-specific media handling behavior in Jellyfin's service configuration."
+    },
+    {
+      "id": 155,
+      "category": "service",
+      "source_file": "Emby.Server.Implementations/Localization/Core/gsw.json",
+      "value": "NotificationOptionApplicationUpdateAvailable",
+      "confidence": 0.75,
+      "notes": "Indicates a notification service behavior for application update availability, suggesting integration with a background notification system."
+    },
+    {
+      "id": 158,
+      "category": "service",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_webm.json",
+      "value": "Jellyfin.MediaEncoding.Tests",
+      "confidence": 0.75,
+      "notes": "Test service context where this configuration is used to validate media encoding behavior with WebM streams."
+    },
+    {
+      "id": 239,
+      "category": "service",
+      "source_file": ".vscode/launch.json",
+      "value": "preLaunchTask: build",
+      "confidence": 0.75,
+      "notes": "Indicates that a build task is triggered before launching the application, suggesting a build dependency in the packaging process"
+    },
+    {
+      "id": 253,
+      "category": "service",
+      "source_file": "Jellyfin.Server/Resources/Configuration/logging.json",
+      "value": "Serilog",
+      "confidence": 0.75,
+      "notes": "Logging service configuration defines output sinks for console and file-based logging with structured message formatting"
+    },
+    {
+      "id": 337,
+      "category": "service",
+      "source_file": "Jellyfin.Server/Properties/launchSettings.json",
+      "value": "Jellyfin.Server (nowebclient)",
+      "confidence": 0.75,
+      "notes": "A specialized service profile that disables the web client via command-line argument."
+    },
+    {
+      "id": 338,
+      "category": "service",
+      "source_file": "Jellyfin.Server/Properties/launchSettings.json",
+      "value": "Jellyfin.Server (API Docs)",
+      "confidence": 0.75,
+      "notes": "A profile for API documentation access, launching to '/api-docs/swagger' with web browser opening enabled."
+    },
+    {
+      "id": 363,
+      "category": "service",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/lineup.json",
+      "value": "5004",
+      "confidence": 0.75,
+      "notes": "Port used by the live TV service for channel data access"
+    },
+    {
+      "id": 374,
+      "category": "service",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/fuzz.sh",
+      "value": "Emby.Server.Implementations.Fuzz",
+      "confidence": 0.75,
+      "notes": "Indicates a potential service or binary target for fuzzing, though not directly defined in Snap configuration"
+    },
+    {
+      "id": 384,
+      "category": "service",
+      "source_file": "tests/Jellyfin.MediaEncoding.Keyframes.Tests/FfProbe/Test Data/keyframes_streamduration_result.json",
+      "value": "keyframes_streamduration_result.json",
+      "confidence": 0.75,
+      "notes": "May be consumed by a service that validates keyframe timing during media encoding, implying a test service or validation component in the snap."
+    },
+    {
+      "id": 388,
+      "category": "service",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/discover.json",
+      "value": "HDHomeRun PRIME",
+      "confidence": 0.75,
+      "notes": "Device model identified in the configuration, indicating the type of hardware being managed"
+    },
+    {
+      "id": 397,
+      "category": "service",
+      "source_file": "fuzz/Jellyfin.Api.Fuzz/fuzz.sh",
+      "value": "Jellyfin.Api.Fuzz",
+      "confidence": 0.75,
+      "notes": "Indicates a potential fuzzing service or binary that may be part of a larger fuzzing pipeline"
+    },
+    {
+      "id": 407,
+      "category": "service",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/10.10.10.100/discover.json",
+      "value": "HDHomeRun DUAL",
+      "confidence": 0.75,
+      "notes": "The FriendlyName identifies the device as an HDHomeRun DUAL, which has two tuners and supports ATSC broadcast standards."
+    },
+    {
+      "id": 412,
+      "category": "service",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/SchedulesDirect/token_offline_response.json",
+      "value": "SERVICE_OFFLINE",
+      "confidence": 0.75,
+      "notes": "Indicates the service is in offline mode, used to signal the application to skip live data fetching."
+    },
+    {
+      "id": 1,
+      "category": "service",
+      "source_file": "Jellyfin.Server.Implementations/FullSystemBackup/BackupService.cs",
+      "value": "BackupService",
+      "confidence": 0.5,
+      "notes": "A service class responsible for creating and restoring system backups in Jellyfin, handling archive validation, version compatibility, and restoration logic."
+    },
+    {
+      "id": 102,
+      "category": "service",
+      "source_file": "Jellyfin.Server/Extensions/WebHostBuilderExtensions.cs",
+      "value": "Kestrel",
+      "confidence": 0.5,
+      "notes": "The web server used by Jellyfin for handling HTTP/HTTPS requests and Unix socket binding."
+    },
+    {
+      "id": 177,
+      "category": "service",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/Program.cs",
+      "value": "SqliteItemRepository",
+      "confidence": 0.5,
+      "notes": "The service under test, instantiated via AutoFixture with mocked dependencies to simulate runtime behavior during fuzzing."
+    },
+    {
+      "id": 202,
+      "category": "service",
+      "source_file": "MediaBrowser.Providers/Plugins/StudioImages/Configuration/config.html",
+      "value": "pluginConfigurationPage",
+      "confidence": 0.5,
+      "notes": "The page uses a plugin configuration UI with dynamic loading and saving of repository URL via API calls."
+    },
+    {
+      "id": 214,
+      "category": "service",
+      "source_file": "Jellyfin.Api/Jellyfin.Api.csproj",
+      "value": "Jellyfin.Api.Tests",
+      "confidence": 0.5,
+      "notes": "Indicated via InternalsVisibleTo attribute for test access to internal types"
+    },
+    {
+      "id": 225,
+      "category": "service",
+      "source_file": "MediaBrowser.Providers/Plugins/AudioDb/Configuration/config.html",
+      "value": "TheAudioDB",
+      "confidence": 0.5,
+      "notes": "Plugin service name used for metadata handling and album name replacement logic."
+    },
+    {
+      "id": 251,
+      "category": "service",
+      "source_file": "Jellyfin.Server.Implementations/Jellyfin.Server.Implementations.csproj",
+      "value": "Jellyfin.Server.Implementations",
+      "confidence": 0.5,
+      "notes": "Suggests this project is a server-side implementation component of the Jellyfin application"
+    },
+    {
+      "id": 264,
+      "category": "service",
+      "source_file": "src/Jellyfin.Drawing.Skia/Jellyfin.Drawing.Skia.csproj",
+      "value": "Jellyfin.Drawing.Skia",
+      "confidence": 0.5,
+      "notes": "A rendering library for handling graphics, including SVG and text shaping"
+    }
+  ]
+}

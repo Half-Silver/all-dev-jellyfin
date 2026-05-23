@@ -1,0 +1,409 @@
+{
+  "_meta": {
+    "generated_at": "2026-05-23T14:02:39.710726+00:00",
+    "source_slug": "jellyfin",
+    "phase": "deep_analysis"
+  },
+  "findings": [
+    {
+      "id": 117,
+      "category": "command",
+      "source_file": "Jellyfin.Api/Controllers/StartupController.cs",
+      "value": "POST /Complete",
+      "confidence": 0.95,
+      "notes": "Endpoint to complete the startup wizard and mark it as finished in the configuration."
+    },
+    {
+      "id": 118,
+      "category": "command",
+      "source_file": "Jellyfin.Api/Controllers/StartupController.cs",
+      "value": "GET /Configuration",
+      "confidence": 0.95,
+      "notes": "Retrieves initial startup wizard configuration (e.g., server name, UI culture)."
+    },
+    {
+      "id": 119,
+      "category": "command",
+      "source_file": "Jellyfin.Api/Controllers/StartupController.cs",
+      "value": "POST /Configuration",
+      "confidence": 0.95,
+      "notes": "Updates initial startup configuration values like server name and metadata settings."
+    },
+    {
+      "id": 120,
+      "category": "command",
+      "source_file": "Jellyfin.Api/Controllers/StartupController.cs",
+      "value": "POST /RemoteAccess",
+      "confidence": 0.95,
+      "notes": "Sets remote access and UPnP settings via the network configuration."
+    },
+    {
+      "id": 121,
+      "category": "command",
+      "source_file": "Jellyfin.Api/Controllers/StartupController.cs",
+      "value": "GET /User",
+      "confidence": 0.95,
+      "notes": "Retrieves the first user; deprecated, should be replaced with authentication endpoints."
+    },
+    {
+      "id": 122,
+      "category": "command",
+      "source_file": "Jellyfin.Api/Controllers/StartupController.cs",
+      "value": "POST /User",
+      "confidence": 0.95,
+      "notes": "Updates the first user's name and password during the startup wizard."
+    },
+    {
+      "id": 141,
+      "category": "command",
+      "source_file": "Jellyfin.Server/StartupOptions.cs",
+      "value": "nowebclient",
+      "confidence": 0.95,
+      "notes": "Command-line flag to disable web client hosting."
+    },
+    {
+      "id": 142,
+      "category": "command",
+      "source_file": "Jellyfin.Server/StartupOptions.cs",
+      "value": "webdir",
+      "confidence": 0.95,
+      "notes": "Command-line flag to specify the path for Jellyfin web UI resources."
+    },
+    {
+      "id": 143,
+      "category": "command",
+      "source_file": "Jellyfin.Server/StartupOptions.cs",
+      "value": "cachedir",
+      "confidence": 0.95,
+      "notes": "Command-line flag to specify the path for caching data."
+    },
+    {
+      "id": 144,
+      "category": "command",
+      "source_file": "Jellyfin.Server/StartupOptions.cs",
+      "value": "configdir",
+      "confidence": 0.95,
+      "notes": "Command-line flag to specify the path for configuration data (user settings, pictures)."
+    },
+    {
+      "id": 145,
+      "category": "command",
+      "source_file": "Jellyfin.Server/StartupOptions.cs",
+      "value": "logdir",
+      "confidence": 0.95,
+      "notes": "Command-line flag to specify the path for log files."
+    },
+    {
+      "id": 146,
+      "category": "command",
+      "source_file": "Jellyfin.Server/StartupOptions.cs",
+      "value": "ffmpeg",
+      "confidence": 0.95,
+      "notes": "Command-line flag to specify a custom FFmpeg executable path."
+    },
+    {
+      "id": 147,
+      "category": "command",
+      "source_file": "Jellyfin.Server/StartupOptions.cs",
+      "value": "service",
+      "confidence": 0.95,
+      "notes": "Command-line flag to run Jellyfin as a headless service."
+    },
+    {
+      "id": 148,
+      "category": "command",
+      "source_file": "Jellyfin.Server/StartupOptions.cs",
+      "value": "package-name",
+      "confidence": 0.95,
+      "notes": "Command-line flag used during packaging (e.g., for Synology)."
+    },
+    {
+      "id": 149,
+      "category": "command",
+      "source_file": "Jellyfin.Server/StartupOptions.cs",
+      "value": "published-server-url",
+      "confidence": 0.95,
+      "notes": "Command-line flag to set a server URL for auto-discovery."
+    },
+    {
+      "id": 150,
+      "category": "command",
+      "source_file": "Jellyfin.Server/StartupOptions.cs",
+      "value": "nonetchange",
+      "confidence": 0.95,
+      "notes": "Command-line flag to disable network status change detection."
+    },
+    {
+      "id": 151,
+      "category": "command",
+      "source_file": "Jellyfin.Server/StartupOptions.cs",
+      "value": "restore-archive",
+      "confidence": 0.95,
+      "notes": "Command-line flag to specify a backup archive to restore from."
+    },
+    {
+      "id": 152,
+      "category": "command",
+      "source_file": "Jellyfin.Server/StartupOptions.cs",
+      "value": "mode",
+      "confidence": 0.95,
+      "notes": "Command-line flag to set the startup mode (e.g., MediaServer)."
+    },
+    {
+      "id": 22,
+      "category": "command",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen4-4K-5.1.json",
+      "value": "TranscodeSeekInfo: Auto",
+      "confidence": 0.75,
+      "notes": "Indicates automatic seek handling during transcoding, relevant for media processing pipeline configuration"
+    },
+    {
+      "id": 67,
+      "category": "command",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-WebOS-23.json",
+      "value": "transcode",
+      "confidence": 0.75,
+      "notes": "Multiple transcoding profiles (e.g., for audio and video) define how media is converted, including codecs like h264, opus, aac, and mp3."
+    },
+    {
+      "id": 83,
+      "category": "command",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Chrome.json",
+      "value": "DirectPlayProfiles",
+      "confidence": 0.75,
+      "notes": "Potential runtime command or configuration used by Jellyfin to determine direct playback behavior for media items."
+    },
+    {
+      "id": 84,
+      "category": "command",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Chrome.json",
+      "value": "TranscodingProfiles",
+      "confidence": 0.75,
+      "notes": "Runtime configuration used by Jellyfin to determine when and how to transcode media based on device capabilities."
+    },
+    {
+      "id": 89,
+      "category": "command",
+      "source_file": "Emby.Server.Implementations/Localization/Core/sk.json",
+      "value": "TaskRefreshLibrary",
+      "confidence": 0.75,
+      "notes": "Scheduled task command for refreshing media library metadata"
+    },
+    {
+      "id": 90,
+      "category": "command",
+      "source_file": "Emby.Server.Implementations/Localization/Core/sk.json",
+      "value": "TaskOptimizeDatabase",
+      "confidence": 0.75,
+      "notes": "Scheduled task to optimize database and reduce empty space"
+    },
+    {
+      "id": 91,
+      "category": "command",
+      "source_file": "Emby.Server.Implementations/Localization/Core/sk.json",
+      "value": "TaskCleanLogs",
+      "confidence": 0.75,
+      "notes": "Scheduled task to clean old log files"
+    },
+    {
+      "id": 92,
+      "category": "command",
+      "source_file": "Emby.Server.Implementations/Localization/Core/sk.json",
+      "value": "TaskUpdatePlugins",
+      "confidence": 0.75,
+      "notes": "Scheduled task to update installed plugins automatically"
+    },
+    {
+      "id": 93,
+      "category": "command",
+      "source_file": "Emby.Server.Implementations/Localization/Core/sk.json",
+      "value": "TaskRefreshPeople",
+      "confidence": 0.75,
+      "notes": "Scheduled task to refresh metadata for people (e.g., artists, directors)"
+    },
+    {
+      "id": 94,
+      "category": "command",
+      "source_file": "Emby.Server.Implementations/Localization/Core/sk.json",
+      "value": "TaskCleanTranscode",
+      "confidence": 0.75,
+      "notes": "Scheduled task to clean old transcode files older than one day"
+    },
+    {
+      "id": 159,
+      "category": "command",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_webm.json",
+      "value": "ffprobe",
+      "confidence": 0.75,
+      "notes": "Tool used to probe the video and audio streams, as indicated by the 'probe_score' and stream metadata structure."
+    },
+    {
+      "id": 218,
+      "category": "command",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_interlaced.json",
+      "value": "probe",
+      "confidence": 0.75,
+      "notes": "Probe command used to analyze video metadata, indicating dependency on FFmpeg or similar tooling"
+    },
+    {
+      "id": 236,
+      "category": "command",
+      "source_file": ".vscode/launch.json",
+      "value": "--nowebclient",
+      "confidence": 0.75,
+      "notes": "Command-line argument passed to launch Jellyfin without web client functionality"
+    },
+    {
+      "id": 237,
+      "category": "command",
+      "source_file": ".vscode/launch.json",
+      "value": "--ffmpeg",
+      "confidence": 0.75,
+      "notes": "Command-line argument to specify FFmpeg path for media processing"
+    },
+    {
+      "id": 254,
+      "category": "command",
+      "source_file": "Jellyfin.Server/Resources/Configuration/logging.json",
+      "value": "console",
+      "confidence": 0.75,
+      "notes": "Console logging sink is configured to output log messages with timestamp, level, thread ID, and source context"
+    },
+    {
+      "id": 255,
+      "category": "command",
+      "source_file": "Jellyfin.Server/Resources/Configuration/logging.json",
+      "value": "file",
+      "confidence": 0.75,
+      "notes": "File logging sink with daily rolling intervals and file size limit (100MB) is configured for persistent log retention"
+    },
+    {
+      "id": 369,
+      "category": "command",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/fuzz.sh",
+      "value": "dotnet build -c Release ../../Emby.Server.Implementations/Emby.Server.Implementations.csproj --output bin",
+      "confidence": 0.75,
+      "notes": "Builds the Emby.Server.Implementations project in release mode and outputs to bin directory"
+    },
+    {
+      "id": 370,
+      "category": "command",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/fuzz.sh",
+      "value": "sharpfuzz bin/Emby.Server.Implementations.dll",
+      "confidence": 0.75,
+      "notes": "Applies sharpfuzz to the compiled Emby.Server.Implementations.dll for fuzzing preparation"
+    },
+    {
+      "id": 371,
+      "category": "command",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/fuzz.sh",
+      "value": "afl-fuzz -i \"Testcases/$1\" -o \"Findings/$1\" -t 5000 ./bin/Debug/net10.0/Emby.Server.Implementations.Fuzz \"$1\"",
+      "confidence": 0.75,
+      "notes": "Runs AFL-based fuzzing with input and output directories based on the provided argument"
+    },
+    {
+      "id": 393,
+      "category": "command",
+      "source_file": "fuzz/Jellyfin.Api.Fuzz/fuzz.sh",
+      "value": "dotnet build -c Release ../../Jellyfin.Api/Jellyfin.Api.csproj --output bin",
+      "confidence": 0.75,
+      "notes": "Builds the Jellyfin.Api project in release mode and outputs to the bin directory"
+    },
+    {
+      "id": 394,
+      "category": "command",
+      "source_file": "fuzz/Jellyfin.Api.Fuzz/fuzz.sh",
+      "value": "sharpfuzz bin/Jellyfin.Api.dll",
+      "confidence": 0.75,
+      "notes": "Runs SharpFuzz on the compiled Jellyfin.Api DLL for fuzzing"
+    },
+    {
+      "id": 395,
+      "category": "command",
+      "source_file": "fuzz/Jellyfin.Api.Fuzz/fuzz.sh",
+      "value": "afl-fuzz -i \"Testcases/$1\" -o \"Findings/$1\" -t 5000 ./bin/Debug/net10.0/Jellyfin.Api.Fuzz \"$1\"",
+      "confidence": 0.75,
+      "notes": "Executes AFL-based fuzzing with input and output directory paths derived from the first argument"
+    },
+    {
+      "id": 414,
+      "category": "command",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/SchedulesDirect/token_offline_response.json",
+      "value": "token_offline_response.json",
+      "confidence": 0.75,
+      "notes": "A configuration file used to simulate offline responses in testing, possibly used during snap integration or testing workflows."
+    },
+    {
+      "id": 2,
+      "category": "command",
+      "source_file": "Jellyfin.Server.Implementations/FullSystemBackup/BackupService.cs",
+      "value": "RestoreBackupAsync",
+      "confidence": 0.5,
+      "notes": "An asynchronous method that restores a system backup from an archive path, validating file existence and version compatibility."
+    },
+    {
+      "id": 3,
+      "category": "command",
+      "source_file": "Jellyfin.Server.Implementations/FullSystemBackup/BackupService.cs",
+      "value": "ScheduleRestoreAndRestartServer",
+      "confidence": 0.5,
+      "notes": "Schedules a restore and restarts the server after restoring a backup, setting restore path and triggering restart via application lifecycle."
+    },
+    {
+      "id": 76,
+      "category": "command",
+      "source_file": "src/Jellyfin.Extensions/StringExtensions.cs",
+      "value": "Transliterator.GetInstance",
+      "confidence": 0.5,
+      "notes": "Used to instantiate a transliterator based on the JELLYFIN_TRANSLITERATOR_ID environment variable"
+    },
+    {
+      "id": 103,
+      "category": "command",
+      "source_file": "Jellyfin.Server/Extensions/WebHostBuilderExtensions.cs",
+      "value": "UseKestrel",
+      "confidence": 0.5,
+      "notes": "Configures Kestrel server options including HTTP and HTTPS bindings."
+    },
+    {
+      "id": 168,
+      "category": "command",
+      "source_file": "src/Jellyfin.MediaEncoding.Keyframes/FfProbe/FfProbeKeyframeExtractor.cs",
+      "value": "-fflags +genpts -v error -skip_frame nokey -show_entries format=duration -show_entries stream=duration -show_entries packet=pts_time,flags -select_streams v -of csv",
+      "confidence": 0.5,
+      "notes": "The command-line arguments passed to ffprobe for keyframe extraction, indicating specific behavior for duration and packet handling."
+    },
+    {
+      "id": 171,
+      "category": "command",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/Program.cs",
+      "value": "PathExtensions.TryReplaceSubPath",
+      "confidence": 0.5,
+      "notes": "A fuzzing command that validates path replacement logic using string splitting and path manipulation."
+    },
+    {
+      "id": 172,
+      "category": "command",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/Program.cs",
+      "value": "SqliteItemRepository.ItemImageInfoFromValueString",
+      "confidence": 0.5,
+      "notes": "A fuzzing command that triggers the SQLite item repository's image info parsing logic with mocked dependencies."
+    },
+    {
+      "id": 203,
+      "category": "command",
+      "source_file": "MediaBrowser.Providers/Plugins/StudioImages/Configuration/config.html",
+      "value": "ApiClient.getPluginConfiguration",
+      "confidence": 0.5,
+      "notes": "Fetches current plugin configuration from the Emby API to populate the repository URL field."
+    },
+    {
+      "id": 204,
+      "category": "command",
+      "source_file": "MediaBrowser.Providers/Plugins/StudioImages/Configuration/config.html",
+      "value": "ApiClient.updatePluginConfiguration",
+      "confidence": 0.5,
+      "notes": "Saves the updated repository URL back to the Emby server upon form submission."
+    }
+  ]
+}

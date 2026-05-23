@@ -1,0 +1,151 @@
+name: all-dev-jellyfin
+base: core24
+version: "1.0.0"
+summary: "A media server for streaming and transcoding audio and video content across.."
+description: |
+  Jellyfin is a free, open-source media server that supports transcoding, live TV, and device-specific profiles. It provides a web-based UI for managing media libraries, user accounts, and device settings. The snap runs as a background service with strict confinement, allowing secure access to media files and network services. It supports multiple device profiles (e.g., Tizen, WebOS, Android) and can be configured via environment variables for data and configuration paths.
+
+grade: stable
+confinement: strict
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+apps:
+  daemon:
+    command: bin/ct-engine run
+    daemon: simple                  # Optimized for headless background services
+    restart-condition: always
+
+    plugs:
+
+      - network
+
+      - network-bind
+
+      - home
+
+
+
+    environment:
+      SNAP_USER_DATA: "$SNAP_DATA"
+      SNAP_USER_COMMON: "$SNAP_COMMON"
+
+
+
+
+parts:
+  # Part 1: Upstream application
+  all-dev-jellyfin:
+    plugin: nil
+    source: https://github.com/jellyfin/jellyfin.git
+    source-type: git
+
+    
+    # Common environment settings for production builds
+    build-environment:
+      - PATH: "$SNAPCRAFT_STAGE/usr/bin:$PATH"
+      - LD_LIBRARY_PATH: "$SNAPCRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:${LD_LIBRARY_PATH:-}"
+
+
+    build-packages:
+
+      - libavcodec-dev
+
+      - libavformat-dev
+
+      - libavutil-dev
+
+      - libglib2.0-0-dev
+
+      - ffmpeg
+
+      - curl
+
+      - libxslt1.1
+
+      - libffi8
+
+      - libssl-dev
+
+      - libxslt1-dev
+
+      - libffi-dev
+
+
+
+    stage-packages:
+
+      - ca-certificates
+
+      - libavcodec-dev
+
+      - libavformat-dev
+
+      - libavutil-dev
+
+      - libglib2.0-0
+
+      - ffmpeg
+
+      - curl
+
+      - libxslt1.1
+
+
+
+
+
+
+
+
+    override-build: |
+
+      dotnet build --no-restore --configuration Release
+
+      cp $SNAPCRAFT_PART_INSTALL/bin/jellyfin $SNAP/bin/jellyfin
+
+      cp -r * $SNAPCRAFT_PART_INSTALL/
+
+
+
+
+
+
+
+  # Part 2: CT Engine
+  ct-engine:
+    plugin: dump
+    source: .
+    organize:
+      src/ct_engine.py: bin/ct-engine
+      snap/hooks/configure: snap/hooks/configure
+    stage:
+      - bin/ct-engine
+      - snap/hooks/configure
+
+  # Part 3: Plugin manifest
+  plugin-manifest:
+    plugin: dump
+    source: .
+    organize:
+      plugin.yaml: plugin.yaml
+    stage:
+      - plugin.yaml
+
+  # Part 4: Runtime dependencies for ct-engine
+  runtime:
+    plugin: nil
+    stage-packages:
+      - ca-certificates
+      - python3-minimal

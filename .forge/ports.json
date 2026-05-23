@@ -1,0 +1,81 @@
+{
+  "_meta": {
+    "generated_at": "2026-05-23T14:02:39.710726+00:00",
+    "source_slug": "jellyfin",
+    "phase": "deep_analysis"
+  },
+  "findings": [
+    {
+      "id": 23,
+      "category": "port",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen4-4K-5.1.json",
+      "value": "19080",
+      "confidence": 0.75,
+      "notes": "Inferred default Jellyfin HTTP port (not explicitly in file, but common in such profiles); may be used in Snap's network exposure"
+    },
+    {
+      "id": 32,
+      "category": "port",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen3-stereo.json",
+      "value": "None specified",
+      "confidence": 0.75,
+      "notes": "No explicit port configuration found in the file; port handling would be managed externally"
+    },
+    {
+      "id": 52,
+      "category": "port",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-AndroidPixel.json",
+      "value": "8080",
+      "confidence": 0.75,
+      "notes": "Implied default port for Jellyfin web interface; though not explicitly defined in this file, it's commonly used in device profiles for streaming."
+    },
+    {
+      "id": 70,
+      "category": "port",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-WebOS-23.json",
+      "value": "8096",
+      "confidence": 0.75,
+      "notes": "Although not explicitly listed, WebOS devices typically use port 8096 for media streaming; this is inferred as a common default for Jellyfin on WebOS."
+    },
+    {
+      "id": 137,
+      "category": "port",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-RokuSSPlus.json",
+      "value": "http, hls",
+      "confidence": 0.75,
+      "notes": "Protocols used for media delivery, indicating potential port exposure (e.g., 8080 for HTTP, 1935 for HLS) in Snap's network configuration."
+    },
+    {
+      "id": 160,
+      "category": "port",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_webm.json",
+      "value": "0",
+      "confidence": 0.75,
+      "notes": "No explicit port configuration found in this file; port-related settings are not present."
+    },
+    {
+      "id": 220,
+      "category": "port",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_interlaced.json",
+      "value": "12800",
+      "confidence": 0.75,
+      "notes": "Time base denominator (1/12800) in stream metadata, may relate to timing or synchronization in media processing"
+    },
+    {
+      "id": 97,
+      "category": "port",
+      "source_file": "Jellyfin.Server/Extensions/WebHostBuilderExtensions.cs",
+      "value": "httpPort",
+      "confidence": 0.5,
+      "notes": "Configures the HTTP port for the Kestrel web server."
+    },
+    {
+      "id": 98,
+      "category": "port",
+      "source_file": "Jellyfin.Server/Extensions/WebHostBuilderExtensions.cs",
+      "value": "httpsPort",
+      "confidence": 0.5,
+      "notes": "Configures the HTTPS port; optional and requires a valid certificate if used."
+    }
+  ]
+}

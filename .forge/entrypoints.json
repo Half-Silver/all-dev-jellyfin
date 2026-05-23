@@ -1,0 +1,537 @@
+{
+  "_meta": {
+    "generated_at": "2026-05-23T14:02:39.710726+00:00",
+    "source_slug": "jellyfin",
+    "phase": "deep_analysis"
+  },
+  "findings": [
+    {
+      "id": 45,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Server/Helpers/StartupHelpers.cs",
+      "value": "StartupHelpers.LogEnvironmentInfo",
+      "confidence": 0.95,
+      "notes": "Helper method that logs environment variables, command line arguments, and system details during startup"
+    },
+    {
+      "id": 54,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Server/Startup.cs",
+      "value": "Jellyfin.Server.Startup",
+      "confidence": 0.95,
+      "notes": "The Startup.cs file defines the entrypoint for the Jellyfin server application, configuring ASP.NET Core services and middleware."
+    },
+    {
+      "id": 115,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Api/Controllers/StartupController.cs",
+      "value": "StartupController",
+      "confidence": 0.95,
+      "notes": "The controller handles startup wizard functionality including configuration, remote access, and user setup in Jellyfin API."
+    },
+    {
+      "id": 140,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Server/StartupOptions.cs",
+      "value": "StartupOptions",
+      "confidence": 0.95,
+      "notes": "The StartupOptions class is used by the CommandLine package to parse command-line arguments and configure Jellyfin server behavior."
+    },
+    {
+      "id": 269,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/ScheduledTasks/Triggers/StartupTrigger.cs",
+      "value": "StartupTrigger",
+      "confidence": 0.95,
+      "notes": "A C# class implementing ITaskTrigger that triggers actions during application startup with a 3-second delay, relevant to scheduled task execution in Emby's service."
+    },
+    {
+      "id": 271,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/Sorting/RuntimeComparer.cs",
+      "value": "RuntimeComparer",
+      "confidence": 0.95,
+      "notes": "A C# implementation for comparing media items by runtime duration, used in Emby's sorting logic."
+    },
+    {
+      "id": 272,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/Sorting/StartDateComparer.cs",
+      "value": "StartDateComparer",
+      "confidence": 0.95,
+      "notes": "A sorting comparer implementation in Emby Server for comparing items by start date, used in Live TV program sorting logic."
+    },
+    {
+      "id": 299,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Server/ServerSetupApp/StartupLogTopic.cs",
+      "value": "StartupLogTopic",
+      "confidence": 0.95,
+      "notes": "A C# class used to define log topics for the Jellyfin Server Startup UI, likely used to structure and display startup logs in a hierarchical format."
+    },
+    {
+      "id": 339,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Server/ServerSetupApp/StartupLoggerExtensions.cs",
+      "value": "StartupLoggerExtensions.cs",
+      "confidence": 0.95,
+      "notes": "A C# extension method used to register the startup logger service in the Jellyfin.Server application, indicating potential involvement in application initialization and logging setup."
+    },
+    {
+      "id": 340,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Api/Models/StartupDtos/StartupConfigurationDto.cs",
+      "value": "StartupConfigurationDto",
+      "confidence": 0.95,
+      "notes": "A DTO class used to define startup configuration parameters in Jellyfin API, potentially used for configuration input during application startup."
+    },
+    {
+      "id": 347,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Server/Configuration/StartupMode.cs",
+      "value": "StartupMode",
+      "confidence": 0.95,
+      "notes": "Defines possible startup modes for Jellyfin Server, used to configure runtime behavior such as normal operation, system migration, or database seeding."
+    },
+    {
+      "id": 375,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Api/Models/StartupDtos/StartupUserDto.cs",
+      "value": "StartupUserDto",
+      "confidence": 0.95,
+      "notes": "A data transfer object used in Jellyfin API to represent user credentials during startup, likely used for authentication or configuration purposes."
+    },
+    {
+      "id": 380,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Api/Models/StartupDtos/StartupRemoteAccessDto.cs",
+      "value": "StartupRemoteAccessDto",
+      "confidence": 0.95,
+      "notes": "A DTO class used in Jellyfin API for configuring remote access settings during startup."
+    },
+    {
+      "id": 19,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Tizen4-4K-5.1.json",
+      "value": "DirectPlayProfile",
+      "confidence": 0.75,
+      "notes": "Configures direct playback profiles for various media types (audio, video) with supported codecs and containers"
+    },
+    {
+      "id": 64,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/Localization/Core/fr-CA.json",
+      "value": "Emby.Server.Implementations",
+      "confidence": 0.75,
+      "notes": "Indicates the main implementation module for Emby Server, relevant for snap packaging entry points"
+    },
+    {
+      "id": 65,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-WebOS-23.json",
+      "value": "WebOS",
+      "confidence": 0.75,
+      "notes": "The profile is specifically tailored for WebOS devices, indicating platform-specific behavior in media transcoding and playback."
+    },
+    {
+      "id": 78,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Chrome.json",
+      "value": "DirectPlayProfiles",
+      "confidence": 0.75,
+      "notes": "Defines direct play capabilities for various media types and codecs, indicating supported playback formats for the Chrome device."
+    },
+    {
+      "id": 79,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-Chrome.json",
+      "value": "TranscodingProfiles",
+      "confidence": 0.75,
+      "notes": "Configures transcoding behavior for audio and video, including streaming and static contexts with specific codecs and protocols."
+    },
+    {
+      "id": 87,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/Localization/Core/sk.json",
+      "value": "Emby.Server",
+      "confidence": 0.75,
+      "notes": "Indirectly referenced through application context; primary entrypoint for Emby server service"
+    },
+    {
+      "id": 132,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.Model.Tests/Test Data/DeviceProfile-RokuSSPlus.json",
+      "value": "CodecProfiles",
+      "confidence": 0.75,
+      "notes": "Specifies video codec behavior based on conditions like video profile, level, and interlacing, used for hardware compatibility and encoding decisions."
+    },
+    {
+      "id": 153,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/Localization/Core/gsw.json",
+      "value": "AppDeviceValues",
+      "confidence": 0.75,
+      "notes": "Defines a format string for displaying app and device names in the UI, indicating dynamic content used in user-facing messages."
+    },
+    {
+      "id": 156,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_webm.json",
+      "value": "video_webm.json",
+      "confidence": 0.75,
+      "notes": "Config file used for probing video stream metadata in WebM format, relevant for media encoding testing in Jellyfin."
+    },
+    {
+      "id": 215,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.MediaEncoding.Tests/Test Data/Probing/video_interlaced.json",
+      "value": "video_interlaced.json",
+      "confidence": 0.75,
+      "notes": "Config file used for probing interlaced video streams in Jellyfin MediaEncoding tests"
+    },
+    {
+      "id": 235,
+      "category": "entrypoint",
+      "source_file": ".vscode/launch.json",
+      "value": "Jellyfin.Server/bin/Debug/net10.0/jellyfin.dll",
+      "confidence": 0.75,
+      "notes": "The main executable path used in launch configurations for .NET Core launches"
+    },
+    {
+      "id": 240,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/Localization/Core/hy.json",
+      "value": "Emby.Server.Implementations/Localization/Core/hy.json",
+      "confidence": 0.75,
+      "notes": "Specifies the path to the Armenian language localization file used in Emby Server"
+    },
+    {
+      "id": 315,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/Localization/Core/zu.json",
+      "value": "Emby.Server.Implementations/Localization/Core/zu.json",
+      "confidence": 0.75,
+      "notes": "Config file used to provide localized strings for Emby Server UI in Zulu"
+    },
+    {
+      "id": 323,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/Localization/Core/fo.json",
+      "value": "Emby.Server.Implementations/Localization/Core/fo.json",
+      "confidence": 0.75,
+      "notes": "Config file used to provide localized strings for UI elements in Icelandic"
+    },
+    {
+      "id": 328,
+      "category": "entrypoint",
+      "source_file": ".vscode/tasks.json",
+      "value": "dotnet",
+      "confidence": 0.75,
+      "notes": "The task runner uses 'dotnet' as the command to execute build and test operations, indicating a dependency on the .NET SDK for building and testing the Jellyfin application."
+    },
+    {
+      "id": 335,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Server/Properties/launchSettings.json",
+      "value": "Project",
+      "confidence": 0.75,
+      "notes": "All profiles use 'Project' as the commandName, indicating the launch is tied to the project's default entry point in the development environment."
+    },
+    {
+      "id": 341,
+      "category": "entrypoint",
+      "source_file": ".vscode/extensions.json",
+      "value": "ms-dotnettools.csharp",
+      "confidence": 0.75,
+      "notes": "Recommended extension for C# development in VS Code"
+    },
+    {
+      "id": 342,
+      "category": "entrypoint",
+      "source_file": ".vscode/extensions.json",
+      "value": "editorconfig.editorconfig",
+      "confidence": 0.75,
+      "notes": "Recommended extension for EditorConfig support in VS Code"
+    },
+    {
+      "id": 343,
+      "category": "entrypoint",
+      "source_file": ".vscode/extensions.json",
+      "value": "github.vscode-github-actions",
+      "confidence": 0.75,
+      "notes": "Recommended extension for GitHub Actions integration in VS Code"
+    },
+    {
+      "id": 344,
+      "category": "entrypoint",
+      "source_file": ".vscode/extensions.json",
+      "value": "ms-dotnettools.vscode-dotnet-runtime",
+      "confidence": 0.75,
+      "notes": "Recommended extension for .NET runtime support in VS Code"
+    },
+    {
+      "id": 345,
+      "category": "entrypoint",
+      "source_file": ".vscode/extensions.json",
+      "value": "ms-dotnettools.csdevkit",
+      "confidence": 0.75,
+      "notes": "Recommended extension for CS DevKit support in VS Code"
+    },
+    {
+      "id": 346,
+      "category": "entrypoint",
+      "source_file": ".vscode/extensions.json",
+      "value": "alexcvzz.vscode-sqlite",
+      "confidence": 0.75,
+      "notes": "Recommended extension for SQLite database support in VS Code"
+    },
+    {
+      "id": 357,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/lineup.json",
+      "value": "http://192.168.1.111:5004/auto/v4.1",
+      "confidence": 0.75,
+      "notes": "Live TV channel URL entry point for WCMH-DT channel"
+    },
+    {
+      "id": 358,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/lineup.json",
+      "value": "http://192.168.1.111:5004/auto/v4.2",
+      "confidence": 0.75,
+      "notes": "Live TV channel URL entry point for MeTV channel"
+    },
+    {
+      "id": 359,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/lineup.json",
+      "value": "http://192.168.1.111:5004/auto/v4.3",
+      "confidence": 0.75,
+      "notes": "Live TV channel URL entry point for ION TV channel"
+    },
+    {
+      "id": 360,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/lineup.json",
+      "value": "http://192.168.1.111:5004/auto/v6.1",
+      "confidence": 0.75,
+      "notes": "Live TV channel URL entry point for WSYX DT channel"
+    },
+    {
+      "id": 361,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/lineup.json",
+      "value": "http://192.168.1.111:5004/auto/v6.2",
+      "confidence": 0.75,
+      "notes": "Live TV channel URL entry point for MYTV channel"
+    },
+    {
+      "id": 362,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/lineup.json",
+      "value": "http://192.168.1.111:5004/auto/v6.3",
+      "confidence": 0.75,
+      "notes": "Live TV channel URL entry point for ANTENNA channel"
+    },
+    {
+      "id": 372,
+      "category": "entrypoint",
+      "source_file": "fuzz/Emby.Server.Implementations.Fuzz/fuzz.sh",
+      "value": "fuzz.sh",
+      "confidence": 0.75,
+      "notes": "Script serves as the entrypoint for fuzzing operations, likely invoked during CI/CD or testing workflows"
+    },
+    {
+      "id": 382,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.MediaEncoding.Keyframes.Tests/FfProbe/Test Data/keyframes_streamduration_result.json",
+      "value": "Test Data",
+      "confidence": 0.75,
+      "notes": "The file is part of test data, suggesting it may be referenced by a test entrypoint in the snap's test suite to validate keyframe timing behavior."
+    },
+    {
+      "id": 386,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/discover.json",
+      "value": "http://192.168.1.182:80",
+      "confidence": 0.75,
+      "notes": "Base URL used by Jellyfin to communicate with the HDHomeRun PRIME device for live TV streaming"
+    },
+    {
+      "id": 387,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/192.168.1.182/discover.json",
+      "value": "http://192.168.1.182:80/lineup.json",
+      "confidence": 0.75,
+      "notes": "URL where Jellyfin retrieves the lineup data from the HDHomeRun device"
+    },
+    {
+      "id": 392,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/Localization/Core/kab.json",
+      "value": "Emby.Server.Implementations/Localization/Core/kab.json",
+      "confidence": 0.75,
+      "notes": "This file may be referenced by the snap's entrypoint to provide localized strings for the Emby Server interface."
+    },
+    {
+      "id": 401,
+      "category": "entrypoint",
+      "source_file": ".config/dotnet-tools.json",
+      "value": "dotnet-ef",
+      "confidence": 0.75,
+      "notes": "Configures the dotnet-ef command-line tool with version 10.0.8, indicating a dependency on the .NET Core Entity Framework CLI tool"
+    },
+    {
+      "id": 405,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.Server.Implementations.Tests/Test Data/HttpServer/Partial.json",
+      "value": "KeepAlive",
+      "confidence": 0.75,
+      "notes": "Indicates a message type for maintaining server connectivity, possibly used in HTTP server lifecycle management."
+    },
+    {
+      "id": 406,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/LiveTv/10.10.10.100/discover.json",
+      "value": "http://10.10.10.100:80",
+      "confidence": 0.75,
+      "notes": "The BaseURL indicates the API endpoint used by Jellyfin to communicate with the HDHomeRun device for live TV discovery and control."
+    },
+    {
+      "id": 416,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.LiveTv.Tests/Test Data/SchedulesDirect/schedules_request.json",
+      "value": "Jellyfin.LiveTv.Tests",
+      "confidence": 0.75,
+      "notes": "Indicates the test suite entry point for validating Live TV scheduling and station data retrieval."
+    },
+    {
+      "id": 9,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Server/Program.cs",
+      "value": "Main",
+      "confidence": 0.5,
+      "notes": "The entry point of the Jellyfin.Server application is defined in the Program.cs file, which is invoked via the Main method when the application starts."
+    },
+    {
+      "id": 104,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Server/Extensions/WebHostBuilderExtensions.cs",
+      "value": "ConfigureWebHostBuilder",
+      "confidence": 0.5,
+      "notes": "Extends the web host builder to configure the application's hosting environment."
+    },
+    {
+      "id": 165,
+      "category": "entrypoint",
+      "source_file": "src/Jellyfin.MediaEncoding.Keyframes/FfProbe/FfProbeKeyframeExtractor.cs",
+      "value": "FfProbeKeyframeExtractor.GetKeyframeData",
+      "confidence": 0.5,
+      "notes": "The method responsible for extracting keyframes using ffprobe, which is a key component in the media encoding pipeline."
+    },
+    {
+      "id": 198,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Server/Jellyfin.Server.csproj",
+      "value": "jellyfin",
+      "confidence": 0.5,
+      "notes": "Assembly name used as entry point for the server application"
+    },
+    {
+      "id": 201,
+      "category": "entrypoint",
+      "source_file": "MediaBrowser.Providers/Plugins/StudioImages/Configuration/config.html",
+      "value": "config.html",
+      "confidence": 0.5,
+      "notes": "HTML configuration file for the Studio Images plugin in Emby, used to define UI settings for repository URL input."
+    },
+    {
+      "id": 248,
+      "category": "entrypoint",
+      "source_file": "Jellyfin.Server.Implementations/Jellyfin.Server.Implementations.csproj",
+      "value": "net10.0",
+      "confidence": 0.5,
+      "notes": "Target framework version indicates the runtime environment for the application"
+    },
+    {
+      "id": 266,
+      "category": "entrypoint",
+      "source_file": "src/Jellyfin.Drawing.Skia/Jellyfin.Drawing.Skia.csproj",
+      "value": "Jellyfin.Drawing.Skia",
+      "confidence": 0.5,
+      "notes": "This project is a dependency for rendering components, likely used by the main Jellyfin service"
+    },
+    {
+      "id": 291,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.Model.Tests/Jellyfin.Model.Tests.csproj",
+      "value": "Exe",
+      "confidence": 0.5,
+      "notes": "The project is configured as an executable for test execution"
+    },
+    {
+      "id": 324,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/IStartupOptions.cs",
+      "value": "FFmpegPath",
+      "confidence": 0.5,
+      "notes": "Configures the path to FFmpeg executable used by Emby server for media processing."
+    },
+    {
+      "id": 325,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/IStartupOptions.cs",
+      "value": "IsService",
+      "confidence": 0.5,
+      "notes": "Determines whether Emby should run as a background service (indicated by --service command line option)."
+    },
+    {
+      "id": 326,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/IStartupOptions.cs",
+      "value": "PackageName",
+      "confidence": 0.5,
+      "notes": "Specifies the package name used in the Emby server configuration, likely for identification or metadata purposes."
+    },
+    {
+      "id": 327,
+      "category": "entrypoint",
+      "source_file": "Emby.Server.Implementations/IStartupOptions.cs",
+      "value": "PublishedServerUrl",
+      "confidence": 0.5,
+      "notes": "Sets the URL that the server will publish to for external access, relevant for network exposure and service discovery."
+    },
+    {
+      "id": 354,
+      "category": "entrypoint",
+      "source_file": "src/Jellyfin.CodeAnalysis/Jellyfin.CodeAnalysis.csproj",
+      "value": "netstandard2.0",
+      "confidence": 0.5,
+      "notes": "Target framework indicates the runtime environment for the library, relevant for snap runtime compatibility"
+    },
+    {
+      "id": 403,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.XbmcMetadata.Tests/Test Data/Radarr.nfo",
+      "value": "https://www.themoviedb.org/movie/583689",
+      "confidence": 0.5,
+      "notes": "A URL pointing to a movie on The Movie Database, possibly used for metadata validation in Jellyfin metadata testing."
+    },
+    {
+      "id": 404,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.XbmcMetadata.Tests/Test Data/Radarr.nfo",
+      "value": "https://www.imdb.com/title/tt4159796",
+      "confidence": 0.5,
+      "notes": "A URL pointing to a movie on IMDb, possibly used for metadata validation in Jellyfin metadata testing."
+    },
+    {
+      "id": 415,
+      "category": "entrypoint",
+      "source_file": "tests/Jellyfin.XbmcMetadata.Tests/Test Data/CommunityRating_OutOfRange.nfo",
+      "value": "Jellyfin.XbmcMetadata.Tests",
+      "confidence": 0.5,
+      "notes": "Indicates the test suite is part of a larger Jellyfin metadata processing system, likely validating metadata parsing behavior, including invalid community ratings."
+    }
+  ]
+}
