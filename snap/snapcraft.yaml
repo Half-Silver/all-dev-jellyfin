@@ -4,7 +4,7 @@
 name: all-dev-jellyfin
 summary: "Jellyfin: The Free Software Media System"
 description: |
-  Jellyfin is the volunteer-built media solution that puts you in control of
+  Jellyfin is the vgit checkout -b all-dev-rebrandolunteer-built media solution that puts you in control of
   your media. Stream to any device from your own server, with no strings
   attached. Your media, your server, your way.
   ---
