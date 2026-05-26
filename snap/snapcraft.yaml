@@ -99,7 +99,7 @@ apps:
     environment: *_environment
     plugs:
       - opengl
-  itrue-jellyfin:
+  all-dev-jellyfin:
     command: usr/local/bin/jellyfin.sh
     daemon: simple
     plugs:
