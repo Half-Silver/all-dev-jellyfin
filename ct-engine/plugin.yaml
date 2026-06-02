@@ -1,0 +1,35 @@
+app:
+  name: all-dev-jellyfin
+  version: "1.0.0"
+
+# Sidecar mode.
+#
+# Jellyfin runs its own snapd-managed daemon (the `jellyfin` app defined in
+# snapcraft.yaml, which execs the jellyfin server and serves its web UI / API
+# over HTTP on port 8096). The CT engine does NOT launch or manage that daemon
+# — it runs as a lightweight reporting sidecar that validates/persists the
+# config Control Tower pushes via `snap set` and streams status callbacks back
+# to CT.
+run:
+  command: ""
+
+# Status reported on the initial and periodic callbacks. The jellyfin server
+# listens on port 8096 over HTTP by default (see the `jellyfin` app in
+# snapcraft.yaml).
+sidecar:
+  status_command: "hostname -I | awk '{print \"Jellyfin: http://\" $1 \":8096\"}'"
+
+output:
+  mode: logs
+  interval: 60
+  initial_event: "message_initial"
+  periodic_event: "message"
+  stop_event: "deployment_stop"
+
+# Configuration schema — intentionally empty.
+#
+# Jellyfin is configured through its own web UI / config dir (under
+# $SNAP_DATA), so the snap exposes no app settings for Control Tower to push
+# via `snap set`. Only the automatic ct-* keys (handled by the engine itself,
+# all lowercase/hyphen) are used.
+config: {}

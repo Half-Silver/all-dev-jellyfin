@@ -1,0 +1,18 @@
+#!/bin/sh
+# Configure hook.
+#
+# Deliberately NO `set -e`: best-effort only; the hook must never abort and
+# fail the deploy.
+#
+# Jellyfin is configured through its own web UI / config dir (under
+# $SNAP_DATA), so there is no per-app config to apply here — Control Tower
+# only supplies the automatic ct-* keys. This hook just hands them to the
+# engine to validate/persist.
+
+export PATH="$SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH"
+
+if [ -x "$SNAP/bin/ct-engine-run" ]; then
+    "$SNAP/bin/ct-engine-run" hook-configure || true
+fi
+
+exit 0

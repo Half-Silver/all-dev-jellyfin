@@ -4,7 +4,7 @@
 name: all-dev-jellyfin
 summary: "Jellyfin: The Free Software Media System"
 description: |
-  Jellyfin is the vgit checkout -b all-dev-rebrandolunteer-built media solution that puts you in control of
+  Jellyfin is the volunteer-built media solution that puts you in control of
   your media. Stream to any device from your own server, with no strings
   attached. Your media, your server, your way.
   ---
@@ -25,7 +25,7 @@ platforms:
       - amd64
     build-for:
       - amd64
-  arm64: 
+  arm64:
     build-on:
       - arm64
     build-for:
@@ -80,6 +80,30 @@ parts:
       install -Dm0755 "${CRAFT_PART_BUILD}"/*.sh \
         -t "${CRAFT_PART_INSTALL}"/usr/local/bin
 
+  # Control Tower engine: the ct-engine python script, its launcher wrapper,
+  # and its plugin.yaml manifest. The launcher resolves the bundled python3
+  # (staged by ct-runtime) and runs the engine; the manifest is placed at the
+  # snap root where ct-engine looks for $SNAP/plugin.yaml.
+  ct-engine:
+    plugin: dump
+    source: ct-engine/
+    organize:
+      ct_engine.py: bin/ct-engine
+      ct-engine-run: bin/ct-engine-run
+      plugin.yaml: plugin.yaml
+    stage:
+      - bin/ct-engine
+      - bin/ct-engine-run
+      - plugin.yaml
+
+  # Runtime deps for the ct-engine sidecar: python3 to execute the engine and
+  # ca-certificates so its HTTPS callbacks to ct-callback-url verify.
+  ct-runtime:
+    plugin: nil
+    stage-packages:
+      - ca-certificates
+      - python3-minimal
+
 apps:
   vainfo:
     command: usr/bin/vainfo
@@ -117,6 +141,19 @@ apps:
       JELLYFIN_CONFIG_DIR: "${SNAP_COMMON}/config"
       JELLYFIN_DATA_DIR: "${SNAP_COMMON}/data"
       JELLYFIN_WEB_DIR: "${SNAP}/usr/share/jellyfin/web"
+
+  # Control Tower integration sidecar. Runs alongside the jellyfin daemon
+  # (it does not manage it): validates/persists the config CT pushes via
+  # `snap set` and streams status callbacks to ct-callback-url. Driven by
+  # ct-engine/plugin.yaml (sidecar mode).
+  ct-engine:
+    command: bin/ct-engine-run run
+    daemon: simple
+    install-mode: enable
+    restart-condition: always
+    plugs:
+      - network
+      - network-bind
 
 environment:
   # Enable OpenCL on older AMD cards
