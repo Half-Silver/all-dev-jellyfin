@@ -215,8 +215,11 @@
     dz.onclick = function () { fi.click(); };
     dz.ondragover = function (e) { e.preventDefault(); dz.classList.add("drag"); };
     dz.ondragleave = function () { dz.classList.remove("drag"); };
-    dz.ondrop = function (e) { e.preventDefault(); dz.classList.remove("drag"); addFiles(e.dataTransfer.files); };
-    fi.onchange = function (e) { addFiles(e.target.files); };
+    dz.ondrop = function (e) {
+      e.preventDefault(); dz.classList.remove("drag");
+      entriesFromDrop(e.dataTransfer).then(addEntries);
+    };
+    fi.onchange = function (e) { addEntries([].slice.call(e.target.files).map(function (f) { return { file: f, rel: "" }; })); };
     document.getElementById("newFolderBtn").onclick = toggleNewFolder;
     paintQueue();
   }
@@ -237,18 +240,50 @@
     };
   }
 
-  function addFiles(fileList) {
-    var arr = [].slice.call(fileList); if (!arr.length) return;
-    var destPath = up.dest.path, inMedia = up.dest.kind !== "usb";
-    arr.forEach(function (file) {
-      var item = { id: uid(), file: file, name: file.name, size: file.size, uploaded: 0, status: "uploading", error: null };
+  // Recursively pull real Files out of a drop (folders included), skipping the
+  // 0-byte directory entries that previously errored with "Content-Length required".
+  function entriesFromDrop(dt) {
+    var items = dt.items;
+    if (!items || !items.length || !items[0].webkitGetAsEntry) {
+      return Promise.resolve([].slice.call(dt.files).map(function (f) { return { file: f, rel: "" }; }));
+    }
+    var roots = [];
+    for (var i = 0; i < items.length; i++) { var e = items[i].webkitGetAsEntry && items[i].webkitGetAsEntry(); if (e) roots.push(e); }
+    return Promise.all(roots.map(function (e) { return walkEntry(e, ""); })).then(function (arrs) { return [].concat.apply([], arrs); });
+  }
+  function walkEntry(entry, prefix) {
+    return new Promise(function (resolve) {
+      if (entry.isFile) { entry.file(function (f) { resolve([{ file: f, rel: prefix }]); }, function () { resolve([]); }); }
+      else if (entry.isDirectory) {
+        var reader = entry.createReader(), all = [];
+        (function read() {
+          reader.readEntries(function (ents) {
+            if (!ents.length) { Promise.all(all.map(function (e) { return walkEntry(e, prefix + entry.name + "/"); })).then(function (arrs) { resolve([].concat.apply([], arrs)); }); }
+            else { all = all.concat([].slice.call(ents)); read(); }
+          }, function () { resolve([]); });
+        })();
+      } else resolve([]);
+    });
+  }
+
+  function addEntries(list) {
+    if (!list || !list.length) return;
+    var base = up.dest.path, inMedia = up.dest.kind !== "usb", added = 0;
+    list.forEach(function (e) {
+      var file = e.file;
+      if (!file || file.size === 0) return; // skip folders / empty entries
+      var reldir = (e.rel || "").replace(/\/+$/, "");
+      var destPath = reldir ? base + "/" + reldir : base;
+      var item = { id: uid(), file: file, name: file.name, size: file.size, uploaded: 0, status: "uploading", error: null, destPath: destPath, inMedia: inMedia };
       up.queue.push(item);
       startUpload(item, destPath, inMedia);
+      added++;
     });
-    paintQueue();
+    if (added) paintQueue();
   }
 
   function startUpload(item, destPath, inMedia) {
+    item.destPath = destPath; item.inMedia = inMedia;
     var xhr = new XMLHttpRequest();
     item.xhr = xhr;
     xhr.open("POST", "/api/upload?dest=" + encodeURIComponent(destPath) + "&name=" + encodeURIComponent(item.file.name));
@@ -330,7 +365,7 @@
     document.getElementById("scanNow").onclick = triggerScan;
     [].forEach.call(host.querySelectorAll("[data-rm]"), function (b) { b.onclick = function () { var id = b.getAttribute("data-rm"); var it = up.queue.filter(function (f) { return f.id === id; })[0]; if (it && it.xhr && it.status === "uploading") it.xhr.abort(); up.queue = up.queue.filter(function (f) { return f.id !== id; }); paintQueue(); }; });
     [].forEach.call(host.querySelectorAll("[data-retry]"), function (b) {
-      b.onclick = function () { var id = b.getAttribute("data-retry"); var it = up.queue.filter(function (f) { return f.id === id; })[0]; if (!it) return; it.status = "uploading"; it.uploaded = 0; it.error = null; startUpload(it, up.dest.path, up.dest.kind !== "usb"); toast("info", "Retrying upload", it.name); paintQueue(); };
+      b.onclick = function () { var id = b.getAttribute("data-retry"); var it = up.queue.filter(function (f) { return f.id === id; })[0]; if (!it) return; it.status = "uploading"; it.uploaded = 0; it.error = null; startUpload(it, it.destPath || up.dest.path, it.inMedia != null ? it.inMedia : up.dest.kind !== "usb"); toast("info", "Retrying upload", it.name); paintQueue(); };
     });
   }
 
@@ -389,6 +424,7 @@
       '<input class="' + cx("input", "mono", nas.errors.host && "err") + '" id="f_host" placeholder="192.168.1.20" value="' + esc(f.host) + '"></div>' +
       '<div class="field"><label>' + (f.proto === "nfs" ? "Export path" : "Share") + ' <span class="req">*</span></label>' +
       '<input class="' + cx("input", "mono", nas.errors.share && "err") + '" id="f_share" placeholder="' + (f.proto === "nfs" ? "volume1/films" : "media") + '" value="' + esc(f.share) + '"></div></div>' +
+      (f.proto === "smb" ? '<div class="row" style="margin-top:-6px"><button class="btn ghost sm" id="findShares">' + ic("server", "", 14) + ' Find shares on host</button><span class="hint" id="sharesHint" style="margin-left:8px"></span></div><div id="sharesList"></div>' : "") +
       creds +
       '<div class="field"><label>Mount as <span class="req">*</span></label><div class="input-group">' +
       '<div class="addon" style="border-radius:var(--r-sm) 0 0 var(--r-sm);border-right:0">…/nas/</div>' +
@@ -414,6 +450,22 @@
     document.getElementById("f_map").onchange = function (e) { f.mapLibrary = e.target.value; };
     document.getElementById("testBtn").onclick = nasTest;
     document.getElementById("mountBtn").onclick = nasSubmit;
+    var findBtn = document.getElementById("findShares");
+    if (findBtn) findBtn.onclick = function () {
+      if (!f.host.trim()) { toast("err", "Host required", "Enter the NAS host/IP first."); return; }
+      var hint = document.getElementById("sharesHint"), listEl = document.getElementById("sharesList");
+      hint.textContent = "searching…";
+      api("POST", "/api/list-shares", { host: f.host, username: f.user, password: f.pass }).then(function (r) {
+        var b = r.body || {};
+        if (b.ok && b.shares && b.shares.length) {
+          hint.textContent = b.shares.length + " found — click to use:";
+          listEl.innerHTML = '<div class="card-pad col" style="gap:4px">' + b.shares.map(function (s) {
+            return '<div class="loc" data-share="' + esc(s) + '">' + ic("folderOpen", "loc-ic", 16) + '<span class="nm">' + esc(s) + "</span></div>";
+          }).join("") + "</div>";
+          [].forEach.call(listEl.querySelectorAll("[data-share]"), function (n) { n.onclick = function () { f.share = n.getAttribute("data-share"); nas.test = null; renderNas(); }; });
+        } else { hint.textContent = ""; listEl.innerHTML = ""; toast("err", "No shares found", b.msg || "Check host and credentials."); }
+      });
+    };
     [].forEach.call(document.querySelectorAll("[data-unmount]"), function (b) { b.onclick = function () { nasUnmount(b.getAttribute("data-unmount")); }; });
     [].forEach.call(document.querySelectorAll("[data-remount]"), function (b) { b.onclick = function () { nasRemount(b.getAttribute("data-remount")); }; });
   }
@@ -476,7 +528,7 @@
   /* ============================================================
      PASSWORD TAB
      ============================================================ */
-  var pwS = { sel: null, pw: "", confirm: "", show: false, busy: false, doneFor: null, touched: false, manual: "" };
+  var pwS = { sel: null, pw: "", confirm: "", show: false, busy: false, result: null, touched: false, manual: "" };
   function renderPassword() {
     var users = S.users;
     if (!pwS.sel && users.length) pwS.sel = users[0];
@@ -501,10 +553,20 @@
         '<input class="input" id="pwManual" placeholder="admin" value="' + esc(pwS.manual) + '"></div>';
 
     var body;
-    if (pwS.doneFor) {
-      body = '<div class="success-panel fade"><div class="ring">' + ic("check", "", 32) + "</div><h3>Password updated</h3>" +
-        "<p>" + esc(pwS.doneFor) + "'s password has been changed. They'll need the new password to sign in.</p>" +
-        '<button class="btn" id="pwAgain">' + ic("key") + " Set another password</button></div>";
+    if (pwS.result) {
+      var r = pwS.result;
+      var pinBox = r.pin ? '<div class="card-pad col" style="gap:8px;align-items:center;text-align:center">' +
+          '<span class="muted" style="font-size:12.5px">Reset PIN — enter it in Jellyfin (login screen → <b>Forgot Password</b>) to finish</span>' +
+          '<div class="mono" style="font-size:26px;letter-spacing:2px;color:var(--accent);background:var(--bg);padding:10px 18px;border-radius:var(--r);border:1px solid var(--border-2)">' + esc(r.pin) + '</div>' +
+          (r.pin_file ? '<span class="muted mono" style="font-size:11px;word-break:break-all">' + esc(r.pin_file) + '</span>' : "") +
+        '</div>' : "";
+      var head, sub, ring;
+      if (r.new_password_set) { ring = "var(--success-soft)"; head = "Password updated"; sub = esc(r.username) + "'s password has been changed — sign in with the new password."; }
+      else if (r.password_blank) { ring = "var(--warning-soft)"; head = "Password reset to blank"; sub = "Couldn't auto-set the new password. Sign in with an EMPTY password and set it, or use the PIN above in Jellyfin. " + esc(r.detail || ""); }
+      else { ring = "var(--accent-soft)"; head = "Reset PIN created"; sub = esc(r.detail || "Use the PIN above in Jellyfin to finish the reset."); }
+      body = '<div class="success-panel fade" style="padding-top:28px"><div class="ring" style="background:' + ring + '">' + ic(r.new_password_set ? "check" : "key", "", 30) + "</div>" +
+        "<h3>" + head + "</h3><p>" + sub + "</p></div>" + pinBox +
+        '<div class="card-pad"><button class="btn" id="pwAgain">' + ic("key") + " Reset another</button></div>";
     } else {
       body = '<div class="card-head"><div class="avatar" style="background:' + avatarColor(targetName) + ';width:34px;height:34px">' + initials(targetName) + "</div>" +
         '<div><h2 style="margin-bottom:1px">' + (isSelf ? "Your password" : "Reset " + esc(targetName) + "'s password") + '</h2>' +
@@ -538,14 +600,14 @@
       '<div style="padding:7px">' + (users.length ? list : "") + "</div>" + (users.length ? "" : list) + "</div>" +
       '<div class="card">' + body + "</div></div></div>";
 
-    [].forEach.call(document.querySelectorAll("[data-u]"), function (n) { n.onclick = function () { pwS.sel = users.filter(function (u) { return u.id === n.getAttribute("data-u"); })[0]; pwReset(); pwS.doneFor = null; renderPassword(); }; });
+    [].forEach.call(document.querySelectorAll("[data-u]"), function (n) { n.onclick = function () { pwS.sel = users.filter(function (u) { return u.id === n.getAttribute("data-u"); })[0]; pwReset(); pwS.result = null; renderPassword(); }; });
     var pm = document.getElementById("pwManual"); if (pm) pm.oninput = function () { pwS.manual = pm.value; };
     var nw = document.getElementById("pwNew"); if (nw) nw.oninput = function () { pwS.pw = nw.value; renderPassword(); placeCaretEnd("pwNew"); };
     var cf = document.getElementById("pwConfirm"); if (cf) cf.oninput = function () { pwS.confirm = cf.value; renderPassword(); placeCaretEnd("pwConfirm"); };
     var tg = document.getElementById("pwToggle"); if (tg) tg.onclick = function () { pwS.show = !pwS.show; renderPassword(); };
     var cl = document.getElementById("pwClear"); if (cl) cl.onclick = function () { pwReset(); renderPassword(); };
     var sb = document.getElementById("pwSubmit"); if (sb) sb.onclick = pwSubmit;
-    var ag = document.getElementById("pwAgain"); if (ag) ag.onclick = function () { pwS.doneFor = null; pwReset(); renderPassword(); };
+    var ag = document.getElementById("pwAgain"); if (ag) ag.onclick = function () { pwS.result = null; pwReset(); renderPassword(); };
   }
   function pwReset() { pwS.pw = ""; pwS.confirm = ""; pwS.show = false; pwS.touched = false; }
   function placeCaretEnd(id) { var n = document.getElementById(id); if (n) { n.focus(); var v = n.value; n.value = ""; n.value = v; } }
@@ -557,10 +619,15 @@
     pwS.busy = true; renderPassword();
     api("POST", "/api/reset-password", { username: username, new_password: pwS.pw }).then(function (r) {
       pwS.busy = false;
-      if (r.ok && r.body && (r.body.new_password_set || r.body.reset)) {
-        pwS.doneFor = username; toast("ok", "Password updated", "New password set for " + username); renderPassword();
+      var b = r.body || {};
+      if (b.ok && b.pin) {
+        pwS.result = b;
+        if (b.new_password_set) toast("ok", "Password updated", "New password set for " + username);
+        else if (b.password_blank) toast("info", "Password blanked", "Use the PIN shown to finish in Jellyfin");
+        else toast("info", "PIN created", "Enter the PIN shown into Jellyfin to finish");
+        renderPassword();
       } else {
-        toast("err", "Couldn't reset password", (r.body && (r.body.detail || r.body.error)) || ("status " + r.status)); renderPassword();
+        toast("err", "Couldn't reset password", b.detail || b.error || ("status " + r.status)); renderPassword();
       }
     });
   }

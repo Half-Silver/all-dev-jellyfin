@@ -166,7 +166,8 @@ def find_passwordreset_pin() -> str | None:
     except (OSError, ValueError):
         return None
     # Field name has historically been "Pin".
-    return data.get("Pin") or data.get("pin")
+    pin = data.get("Pin") or data.get("pin")
+    return {"pin": pin, "file": newest} if pin else None
 
 
 # ---------------------------------------------------------------------------
@@ -388,6 +389,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._handle_test_nas()
         if path == "/api/remount":
             return self._handle_remount()
+        if path == "/api/list-shares":
+            return self._handle_list_shares()
         return self._send_json(HTTPStatus.NOT_FOUND, {"error": "no such endpoint"})
 
     def _validated_dest(self, dest_param: str) -> Path:
@@ -416,8 +419,13 @@ class Handler(BaseHTTPRequestHandler):
 
     def _handle_status(self) -> None:
         used = dir_size_bytes(MEDIA_DIR) if MEDIA_DIR.exists() else 0
-        # "free of total" for the media root is governed by the demo cap.
-        free = max(0, MEDIA_CAP_BYTES - used)
+        # "free of total" must be honest: the smaller of the demo cap remaining
+        # and the ACTUAL free space on the partition holding the media dir
+        # (the snap's writable area can be much smaller than the 15 GiB cap, so
+        # reporting cap-only made uploads appear to vanish when the disk filled).
+        cap_free = max(0, MEDIA_CAP_BYTES - used)
+        disk_free, disk_total = disk_usage(MEDIA_DIR)
+        free = min(cap_free, disk_free) if disk_free else cap_free
         libraries = [{"id": cat, "name": name, "path": str(MEDIA_DIR / cat),
                       "size": dir_size_bytes(MEDIA_DIR / cat) if (MEDIA_DIR / cat).is_dir() else 0}
                      for cat, (name, _ct) in CATEGORY_LIBRARIES.items()]
@@ -431,6 +439,8 @@ class Handler(BaseHTTPRequestHandler):
             "cap_bytes": MEDIA_CAP_BYTES,
             "free_bytes": free,
             "total_bytes": MEDIA_CAP_BYTES,
+            "disk_free_bytes": disk_free,
+            "disk_total_bytes": disk_total,
             "usage_percent": round(used * 100 / MEDIA_CAP_BYTES, 1) if MEDIA_CAP_BYTES else 0,
             "over_cap": used >= MEDIA_CAP_BYTES,
         })
@@ -493,16 +503,20 @@ class Handler(BaseHTTPRequestHandler):
         if length <= 0:
             return self._send_json(HTTPStatus.LENGTH_REQUIRED, {"error": "Content-Length required"})
 
-        # Enforce the soft demo cap only for the snap-managed media area.
-        if in_media:
-            current = dir_size_bytes(MEDIA_DIR)
-            if current + length > MEDIA_CAP_BYTES:
-                return self._send_json(HTTPStatus.INSUFFICIENT_STORAGE, {
-                    "error": "would exceed media cap",
-                    "cap_bytes": MEDIA_CAP_BYTES,
-                    "usage_bytes": current,
-                    "incoming_bytes": length,
-                })
+        # Refuse if it won't fit: enforce BOTH the demo cap (media area only) and
+        # the real free space on the target partition. Checking real space stops
+        # uploads silently failing mid-write when the disk fills.
+        disk_free, _ = disk_usage(dest_dir)
+        cap_room = (MEDIA_CAP_BYTES - dir_size_bytes(MEDIA_DIR)) if in_media else length
+        room = min(cap_room, disk_free) if disk_free else cap_room
+        if length > room:
+            return self._send_json(HTTPStatus.INSUFFICIENT_STORAGE, {
+                "error": "not enough space for this file",
+                "incoming_bytes": length,
+                "available_bytes": max(0, room),
+                "cap_room_bytes": max(0, cap_room),
+                "disk_free_bytes": disk_free,
+            })
 
         dest = dest_dir / safe_filename(name)
         tmp = dest.with_suffix(dest.suffix + ".part")
@@ -735,16 +749,56 @@ class Handler(BaseHTTPRequestHandler):
         return self._send_json(HTTPStatus.OK, {"ok": False,
             "msg": err[-1] if err else "Could not reach the share. Check host, share and credentials."})
 
+    def _handle_list_shares(self) -> None:
+        """List SMB shares on a host (replaces `smbclient -L`), via `rclone lsd`.
+
+        Body: {"host":"192.168.1.6","username":"...","password":"..."}
+        """
+        body = self._read_json_body()
+        if not os.path.exists(RCLONE_BIN):
+            return self._send_json(HTTPStatus.OK, {"ok": False, "shares": [], "msg": "rclone not available"})
+        host = body.get("host", "")
+        if not host:
+            return self._send_json(HTTPStatus.BAD_REQUEST, {"error": "host required"})
+        obscured = ""
+        if body.get("password"):
+            try:
+                obscured = subprocess.run([RCLONE_BIN, "obscure", body["password"]],
+                                          capture_output=True, text=True, timeout=10).stdout.strip()
+            except (OSError, subprocess.SubprocessError):
+                pass
+        set_rclone_section("_disc", ["type = smb", f"host = {host}",
+                                     f"user = {body.get('username','')}", f"pass = {obscured}"])
+        try:
+            res = subprocess.run([RCLONE_BIN, "lsd", "_disc:", "--config", str(RCLONE_CONFIG),
+                                  "--low-level-retries", "1", "--timeout", "8s", "--contimeout", "8s"],
+                                 capture_output=True, text=True, timeout=20)
+        except (OSError, subprocess.SubprocessError) as exc:
+            return self._send_json(HTTPStatus.OK, {"ok": False, "shares": [], "msg": str(exc)})
+        if res.returncode != 0:
+            err = (res.stderr or "").strip().splitlines()
+            return self._send_json(HTTPStatus.OK, {"ok": False, "shares": [],
+                "msg": err[-1] if err else "Could not list shares (check host / credentials)."})
+        # `rclone lsd` lines look like: "          -1 2024-... -1 ShareName"
+        shares = []
+        for line in res.stdout.splitlines():
+            parts = line.split(None, 4)
+            if len(parts) >= 5:
+                shares.append(parts[4])
+        return self._send_json(HTTPStatus.OK, {"ok": True, "shares": shares})
+
     def _handle_reset_password(self) -> None:
         """Reset a Jellyfin user's password via the anonymous in-network PIN flow.
 
-        1. POST /Users/ForgotPassword {EnteredUsername}  -> Jellyfin writes
+        1. POST /Users/ForgotPassword {EnteredUsername} -> Jellyfin writes
            passwordreset*.json (the PIN) into its data dir.
-        2. Read the PIN locally (we share the data dir).
-        3. POST /Users/ForgotPassword/Pin {Pin}          -> resets to blank.
-        4. Optionally set a supplied new password via AuthenticateByName + change.
+        2. Read the PIN locally (we share the data dir) and ALWAYS return it so
+           the operator can finish in Jellyfin's own Forgot-Password dialog if
+           our automation can't (it 500s on some versions — issue #16579).
+        3. If a new password was supplied, try to redeem the PIN and set it,
+           reporting each step truthfully (no false "success").
 
-        Body: {"username": "<admin>", "new_password": "<optional>"}
+        Body: {"username": "<user>", "new_password": "<optional>"}
         """
         body = self._read_json_body()
         username = body.get("username", "")
@@ -758,38 +812,48 @@ class Handler(BaseHTTPRequestHandler):
             return self._send_json(HTTPStatus.BAD_GATEWAY,
                                    {"error": "could not reach Jellyfin"})
 
-        # Give the server a moment to write the PIN file.
-        pin = None
-        for _ in range(10):
-            pin = find_passwordreset_pin()
-            if pin:
+        # Give the server a moment to write the PIN file, then read it.
+        found = None
+        for _ in range(12):
+            found = find_passwordreset_pin()
+            if found:
                 break
             time.sleep(0.3)
-        if not pin:
-            return self._send_json(HTTPStatus.INTERNAL_SERVER_ERROR, {
-                "error": "PIN file not found",
-                "detail": f"looked under {JELLYFIN_DATA_DIR}; is in-network reset enabled?",
+        if not found:
+            return self._send_json(HTTPStatus.OK, {
+                "ok": False,
+                "detail": ("Jellyfin did not create a reset PIN — the username may "
+                           "be wrong, or in-network password reset is disabled. "
+                           f"Checked {JELLYFIN_DATA_DIR}."),
             })
 
-        status, result = jellyfin_request("POST", "/Users/ForgotPassword/Pin", {"Pin": pin})
-        if status >= 400 or status == 0:
-            return self._send_json(HTTPStatus.BAD_GATEWAY, {
-                "error": "PIN redeem failed",
-                "detail": "known to 500 on some Jellyfin versions (issue #16579); "
-                          "fallback is a direct DB edit while the server is stopped",
-                "jellyfin_status": status, "jellyfin_result": result,
-            })
+        pin, pin_file = found["pin"], found["file"]
+        resp = {"ok": True, "pin": pin, "pin_file": pin_file, "username": username,
+                "pin_redeemed": False, "new_password_set": False, "password_blank": False}
 
-        # Password is now blank. Optionally set the requested new password.
-        if new_password:
+        if not new_password:
+            # "Show the PIN" mode — operator finishes in Jellyfin.
+            resp["detail"] = "Enter this PIN in Jellyfin (login → Forgot Password) to finish."
+            return self._send_json(HTTPStatus.OK, resp)
+
+        # Try to finish automatically: redeem the PIN (blanks the password)…
+        rstatus, rresult = jellyfin_request("POST", "/Users/ForgotPassword/Pin", {"Pin": pin})
+        if rstatus in (200, 204):
+            resp["pin_redeemed"] = True
+            resp["password_blank"] = True
+            # …then set the requested password.
             ok, detail = self._set_password(username, new_password)
+            resp["new_password_set"] = ok
             if not ok:
-                return self._send_json(HTTPStatus.OK, {
-                    "reset": True, "password_blank": True,
-                    "new_password_set": False, "detail": detail,
-                })
-            return self._send_json(HTTPStatus.OK, {"reset": True, "new_password_set": True})
-        self._send_json(HTTPStatus.OK, {"reset": True, "password_blank": True})
+                resp["detail"] = ("Password was reset to BLANK but setting the new one "
+                                  "failed (" + detail + "). Log in with an empty password "
+                                  "and set it, or use the PIN above in Jellyfin.")
+        else:
+            resp["detail"] = ("Automatic PIN redeem failed (Jellyfin status "
+                              + str(rstatus) + "). Use the PIN above in Jellyfin's "
+                              "Forgot-Password dialog to finish.")
+            resp["jellyfin_result"] = rresult
+        self._send_json(HTTPStatus.OK, resp)
 
     def _set_password(self, username: str, new_password: str) -> tuple[bool, str]:
         """After a blank-reset, authenticate (empty pw) and set a new password."""
