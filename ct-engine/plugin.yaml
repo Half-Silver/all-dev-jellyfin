@@ -16,8 +16,20 @@ run:
 # Status reported on the initial and periodic callbacks. The jellyfin server
 # listens on port 8096 over HTTP by default (see the `jellyfin` app in
 # snapcraft.yaml).
+#
+# The status_command also enforces the demo media cap as a soft (monitored)
+# limit: the library lives at $SNAP_COMMON/media (created by the configure
+# hook), so each callback measures its size with `du` and reports usage
+# against the 15GiB demo cap, appending a WARNING once the cap is reached.
+# CT sees this in the periodic "message" callbacks. Constraints from the
+# engine's minimal YAML parser (ct_engine.py):
+#   - one line only (no block scalars);
+#   - left BARE/unquoted — parse_yaml_value strips outer quotes but does NOT
+#     unescape, so inner double quotes must be real, not \"-escaped;
+#   - no ${...} or {word} forms — interpolate() would treat {word} as a config
+#     key. Hence $var (not ${var}) and $((..)) arithmetic only.
 sidecar:
-  status_command: "hostname -I | awk '{print \"Jellyfin: http://\" $1 \":8096\"}'"
+  status_command: ip=$(hostname -I | awk '{print $1}'); cap=16106127360; used=$(du -sb "$SNAP_COMMON/media" 2>/dev/null | cut -f1); [ -n "$used" ] || used=0; umib=$((used/1048576)); pct=$((used*100/cap)); msg="Jellyfin: http://$ip:8096 | media $umib MiB / 15360 MiB demo cap ($pct%)"; [ "$used" -ge "$cap" ] && msg="$msg [WARNING: 15GiB demo cap reached]"; echo "$msg"
 
 output:
   mode: logs

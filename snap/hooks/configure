@@ -11,6 +11,15 @@
 
 export PATH="$SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH"
 
+# Demo media library. To avoid any manual host setup (this is a headless,
+# userless Core box), the library lives inside the snap's own writable area
+# at $SNAP_COMMON/media instead of a host mount. Pre-create the movie/TV
+# folders so they are selectable in Jellyfin's library wizard out of the box.
+# The 15GiB demo cap is monitored/reported by the ct-engine sidecar — see
+# its status_command in ct-engine/plugin.yaml. mkdir -p is idempotent and
+# this hook runs on install and on every config change.
+mkdir -p "$SNAP_COMMON/media/movies" "$SNAP_COMMON/media/tvshows" 2>/dev/null || true
+
 if [ -x "$SNAP/bin/ct-engine-run" ]; then
     "$SNAP/bin/ct-engine-run" hook-configure || true
 fi

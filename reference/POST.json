@@ -20,7 +20,8 @@
   "post_service_actions": [
     {
       "names": [
-        "all-dev-jellyfin.ct-engine"
+        "all-dev-jellyfin.ct-engine",
+        "all-dev-jellyfin.media-portal"
       ],
       "action": "restart"
     }
@@ -34,11 +35,6 @@
     {
       "plug": "all-dev-jellyfin:network-bind",
       "slot": ":network-bind",
-      "action": "connect"
-    },
-    {
-      "plug": "all-dev-jellyfin:home",
-      "slot": ":home",
       "action": "connect"
     },
     {
@@ -59,6 +55,11 @@
     {
       "plug": "all-dev-jellyfin:firewall-control",
       "slot": ":firewall-control",
+      "action": "connect"
+    },
+    {
+      "plug": "all-dev-jellyfin:fuse-support",
+      "slot": ":fuse-support",
       "action": "connect"
     }
   ]

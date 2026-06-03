@@ -96,13 +96,40 @@ parts:
       - bin/ct-engine-run
       - plugin.yaml
 
-  # Runtime deps for the ct-engine sidecar: python3 to execute the engine and
-  # ca-certificates so its HTTPS callbacks to ct-callback-url verify.
+  # Runtime deps for the ct-engine sidecar AND the media-portal app: python3 to
+  # execute them and ca-certificates so HTTPS callbacks verify. Full `python3`
+  # (not just python3-minimal) because media-portal uses http.server, which the
+  # minimal package may omit.
   ct-runtime:
     plugin: nil
     stage-packages:
       - ca-certificates
-      - python3-minimal
+      - python3
+
+  # media-portal: companion web service ("plugin that lives with Jellyfin").
+  # Serves a web UI + /api endpoints to upload media into $SNAP_COMMON/media,
+  # mount a NAS, and reset the Jellyfin password. Frontend in static/ is a
+  # placeholder until the design files land. See portal/server.py.
+  media-portal:
+    plugin: dump
+    source: portal/
+    organize:
+      server.py: bin/media-portal-server
+      portal-run: bin/portal-run
+      static: portal-static
+    stage:
+      - bin/media-portal-server
+      - bin/portal-run
+      - portal-static
+
+  # Self-contained SMB/CIFS mounting for media-portal: rclone mounts an SMB
+  # share over FUSE (snapd mount-control cannot mount cifs/nfs). fusermount3 is
+  # the helper rclone needs to (un)mount. Requires the fuse-support plug.
+  rclone:
+    plugin: nil
+    stage-packages:
+      - rclone
+      - fuse3
 
 apps:
   vainfo:
@@ -127,9 +154,13 @@ apps:
     command: usr/local/bin/jellyfin.sh
     daemon: simple
     plugs:
+      # NOTE: `home` is intentionally NOT plugged. On headless/userless Core it
+      # exposes nothing useful, and dropping it stops the snap bind-mounting the
+      # host home into Jellyfin's view (part of restricting what the library
+      # picker can browse). Media lives in $SNAP_COMMON/media; USB drives are
+      # reached via removable-media.
       - network
       - network-bind
-      - home
       - opengl
       - removable-media
       - mount-observe
@@ -154,6 +185,34 @@ apps:
     plugs:
       - network
       - network-bind
+
+  # Companion web portal. Runs as its own daemon next to the jellyfin server;
+  # shares $SNAP_COMMON so it can write the media library and read Jellyfin's
+  # data dir directly (for the password-reset PIN file). removable-media lets it
+  # list/import from USB drives and host-mounted NFS; fuse-support lets it mount
+  # SMB shares via rclone. removable-media, mount-observe and fuse-support are
+  # manual-connect — wired in reference/POST.json.
+  media-portal:
+    command: bin/portal-run
+    daemon: simple
+    install-mode: enable
+    restart-condition: always
+    plugs:
+      - network
+      - network-bind
+      - removable-media
+      - mount-observe
+      - fuse-support
+    environment:
+      PORTAL_PORT: "8097"
+      PORTAL_STATIC: "$SNAP/portal-static"
+      MEDIA_DIR: "$SNAP_COMMON/media"
+      JELLYFIN_URL: "http://127.0.0.1:8096"
+      JELLYFIN_DATA_DIR: "$SNAP_COMMON/data"
+      JELLYFIN_CONFIG_DIR: "$SNAP_COMMON/config"
+      MEDIA_CAP_BYTES: "16106127360"
+      RCLONE_BIN: "$SNAP/usr/bin/rclone"
+      RCLONE_CONFIG: "$SNAP_COMMON/rclone.conf"
 
 environment:
   # Enable OpenCL on older AMD cards

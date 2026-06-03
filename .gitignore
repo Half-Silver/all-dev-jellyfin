@@ -3,3 +3,5 @@
 /stage
 /*.snap
 /.vscode
+__pycache__/
+*.pyc

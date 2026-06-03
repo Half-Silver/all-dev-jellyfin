@@ -1,0 +1,20 @@
+#!/bin/sh
+# Launcher for the media-portal companion service.
+#
+# Resolves the python3 interpreter staged into the snap (full stdlib — the
+# portal uses http.server, which python3-minimal may omit) and execs the
+# server. Mirrors the ct-engine-run launcher pattern.
+set -e
+
+export PATH="$SNAP/usr/bin:$SNAP/bin:$PATH"
+
+PYTHON="$SNAP/usr/bin/python3"
+if [ ! -x "$PYTHON" ]; then
+    PYTHON="$(command -v python3 || true)"
+fi
+if [ -z "$PYTHON" ]; then
+    echo "media-portal: no python3 interpreter found" >&2
+    exit 1
+fi
+
+exec "$PYTHON" "$SNAP/bin/media-portal-server" "$@"

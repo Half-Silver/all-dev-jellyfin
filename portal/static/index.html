@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JellyMan — Jellyfin media manager</title>
+  <!-- Web fonts are progressive enhancement: the CSS falls back to system-ui
+       when the box/browser is offline, so the panel still renders correctly. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="root"></div>
+  <!-- Vanilla JS recreation of the JellyMan design, wired to the media-portal
+       /api endpoints. No framework/CDN at runtime: this ships inside an offline
+       snap appliance. -->
+  <script src="app.js"></script>
+</body>
+</html>
