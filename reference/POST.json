@@ -48,11 +48,6 @@
       "action": "connect"
     },
     {
-      "plug": "all-dev-jellyfin:mount-observe",
-      "slot": ":mount-observe",
-      "action": "connect"
-    },
-    {
       "plug": "all-dev-jellyfin:firewall-control",
       "slot": ":firewall-control",
       "action": "connect"

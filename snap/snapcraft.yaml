@@ -159,11 +159,13 @@ apps:
       # host home into Jellyfin's view (part of restricting what the library
       # picker can browse). Media lives in $SNAP_COMMON/media; USB drives are
       # reached via removable-media.
+      # `mount-observe` is intentionally NOT plugged: it let Jellyfin enumerate
+      # the host mount table (incl. /var/lib/snapd/hostfs/*) and surface those
+      # paths in the library picker. Jellyfin works fine without it.
       - network
       - network-bind
       - opengl
       - removable-media
-      - mount-observe
       - firewall-control
     environment:
       <<: *_environment
@@ -190,8 +192,9 @@ apps:
   # shares $SNAP_COMMON so it can write the media library and read Jellyfin's
   # data dir directly (for the password-reset PIN file). removable-media lets it
   # list/import from USB drives and host-mounted NFS; fuse-support lets it mount
-  # SMB shares via rclone. removable-media, mount-observe and fuse-support are
-  # manual-connect — wired in reference/POST.json.
+  # SMB shares via rclone. removable-media and fuse-support are manual-connect —
+  # wired in reference/POST.json. (mount detection uses /proc/self/mounts, which
+  # needs no interface, so mount-observe isn't required.)
   media-portal:
     command: bin/portal-run
     daemon: simple
@@ -201,7 +204,6 @@ apps:
       - network
       - network-bind
       - removable-media
-      - mount-observe
       - fuse-support
     environment:
       PORTAL_PORT: "8097"

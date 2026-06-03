@@ -4,7 +4,7 @@ REQUIRED_INTERFACES="network network-bind"
 # `home` intentionally dropped: media lives in $SNAP_COMMON/media and USB drives
 # are reached via removable-media, so Jellyfin never needs the host home (and not
 # exposing it narrows what the library picker can browse).
-OPTIONAL_INTERFACES="removable-media mount-observe opengl firewall-control"
+OPTIONAL_INTERFACES="removable-media opengl firewall-control"
 
 for intf in ${REQUIRED_INTERFACES}; do
         if ! snapctl is-connected "${intf}"; then
