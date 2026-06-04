@@ -152,9 +152,24 @@
     });
     return { root: { kind: "root", id: "root", label: (st.media_root || "").split("/").pop() || "media", path: st.media_root }, libs: libs, usb: usb };
   }
+  // Re-bind a (possibly stale) selection to the CURRENT destinations so its
+  // `path` always reflects the live media_root. The selection is captured as a
+  // {kind,id} (+ optional `subdir` for a "New folder" choice); resolving it
+  // fresh each render avoids uploading to a path that was only valid before
+  // /api/status loaded (when media_root falls back to "/media").
+  function resolveDest(d, sel) {
+    if (!sel) return null;
+    var base = sel.kind === "root" ? d.root
+      : sel.kind === "lib" ? d.libs.filter(function (l) { return l.id === sel.id; })[0]
+      : d.usb.filter(function (u) { return u.id === sel.id; })[0];
+    if (!base || !base.path) return sel; // selection vanished (e.g. USB unplugged) — keep as-is
+    if (!sel.subdir) return base;
+    return { kind: base.kind, id: base.id, label: sel.subdir.split("/").pop(),
+             path: base.path + "/" + sel.subdir, icon: base.icon, subdir: sel.subdir };
+  }
   function renderUpload() {
     var d = destinations();
-    if (!up.dest) up.dest = d.libs[0] || d.root;
+    up.dest = resolveDest(d, up.dest) || d.libs[0] || d.root;
     var st = S.status || {};
     var sel = up.dest;
     var free = sel.kind === "usb" ? sel.free : st.free_bytes;
@@ -234,7 +249,7 @@
     document.getElementById("nfCreate").onclick = function () {
       var nm = document.getElementById("nfName").value.trim().replace(/[^A-Za-z0-9 _\-]/g, "");
       if (!nm) return;
-      up.dest = { kind: up.dest.kind, id: up.dest.id, label: nm, path: up.dest.path + "/" + nm, icon: up.dest.icon };
+      up.dest = { kind: up.dest.kind, id: up.dest.id, subdir: (up.dest.subdir ? up.dest.subdir + "/" : "") + nm };
       toast("ok", "Folder selected", "New files will go to …/" + nm + " (created on first upload)");
       renderUpload();
     };
