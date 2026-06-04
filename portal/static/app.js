@@ -395,6 +395,31 @@
   var nas = { form: blankForm(), test: null, submitting: false, errors: {}, showPass: false };
   function blankForm() { return { name: "", proto: "smb", host: "", share: "", mountname: "", user: "", pass: "", persist: true, mapLibrary: "" }; }
 
+  /* ---- media location (move the whole store onto an external /media dir) ---- */
+  var mediaLoc = { path: "", busy: false };
+  function mediaLocCard() {
+    var st = S.status || {};
+    var ext = !!st.media_external;
+    var roots = (st.media_roots || ["/media", "/mnt", "/run/media"]).join(", ");
+    var loc = ext
+      ? '<div class="path"><span class="badge ok"><span class="dot" style="background:currentColor"></span>External</span> ' +
+          '<span class="mono">' + esc(st.media_target || "") + "</span></div>" +
+        '<span class="hint">Uncapped — ' + fmtBytes(st.free_bytes || 0) + " free of " + fmtBytes(st.total_bytes || 0) + " on the external disk.</span>"
+      : '<div class="path"><span class="badge idle"><span class="dot" style="background:currentColor"></span>Internal</span> ' +
+          '<span class="mono">' + esc(st.media_root || "") + "</span></div>" +
+        '<span class="hint">Snap storage, capped at ' + fmtBytes(st.cap_bytes || 0) + ". Move it onto a host folder to use the full disk.</span>";
+    var form = ext
+      ? '<div class="row" style="gap:10px;margin-top:12px"><button class="btn danger" id="mlRevert"' + (mediaLoc.busy ? " disabled" : "") + ">" +
+          (mediaLoc.busy ? ic("loader", "spin") + " Working…" : ic("eject") + " Revert to internal storage") + "</button></div>"
+      : '<div class="field" style="margin-top:12px"><label>Move media to host folder</label><div class="input-group">' +
+          '<input class="input mono" id="mlPath" placeholder="/media/jellyfin" value="' + esc(mediaLoc.path) + '">' +
+          '<button class="btn primary addon" id="mlApply" style="border-radius:0 var(--r-sm) var(--r-sm) 0"' + (mediaLoc.busy ? " disabled" : "") + ">" +
+          (mediaLoc.busy ? ic("loader", "spin") + " Moving…" : ic("folderOpen") + " Use this folder") + "</button></div>" +
+          '<span class="hint">Must be a sub-folder of ' + esc(roots) + " (reached via removable-media). Existing media is moved across; nothing is overwritten.</span></div>";
+    return '<div class="card card-pad" style="margin-bottom:18px"><div class="card-head" style="padding:0 0 4px">' +
+      "<h2>Media location</h2></div>" + loc + form + "</div>";
+  }
+
   function renderNas() {
     var f = nas.form, meta = PROTO[f.proto];
     var mountpoint = ((S.status && S.status.media_root) || "/media") + "/nas/" + (f.mountname || "share");
@@ -429,6 +454,7 @@
     document.getElementById("main").innerHTML =
       '<div class="fade"><div class="page-head"><h1>Network storage</h1>' +
       "<p>Mount a NAS or network share into your media folder so Jellyfin can stream from it. SMB &amp; WebDAV mount directly; NFS is linked from a host mount.</p></div>" +
+      mediaLocCard() +
       '<div class="nas-grid"><div class="card"><div class="card-head"><h2>Current mounts</h2><span class="ch-sub">' + S.mounts.length + " configured</span></div>" + mountsHtml + "</div>" +
       '<div class="card"><div class="card-head"><h2>Add a share</h2></div><div class="card-pad col" style="gap:15px">' +
       '<div class="field"><label>Protocol</label><div class="seg" style="width:100%">' +
@@ -483,6 +509,35 @@
     };
     [].forEach.call(document.querySelectorAll("[data-unmount]"), function (b) { b.onclick = function () { nasUnmount(b.getAttribute("data-unmount")); }; });
     [].forEach.call(document.querySelectorAll("[data-remount]"), function (b) { b.onclick = function () { nasRemount(b.getAttribute("data-remount")); }; });
+    var mlPath = document.getElementById("mlPath");
+    if (mlPath) mlPath.oninput = function () { mediaLoc.path = mlPath.value; };
+    var mlApply = document.getElementById("mlApply"); if (mlApply) mlApply.onclick = mediaLocApply;
+    var mlRevert = document.getElementById("mlRevert"); if (mlRevert) mlRevert.onclick = mediaLocRevert;
+  }
+
+  function mediaLocApply() {
+    var p = (mediaLoc.path || "").trim() || "/media/jellyfin";
+    mediaLoc.busy = true; renderNas();
+    api("POST", "/api/media-location", { path: p }).then(function (r) {
+      mediaLoc.busy = false;
+      if (r.ok && r.body && r.body.external) {
+        mediaLoc.path = "";
+        toast("ok", "Media moved", "Library now lives at " + r.body.target +
+          (r.body.migrated ? " (" + r.body.migrated + " file" + (r.body.migrated > 1 ? "s" : "") + " moved)" : ""));
+      } else {
+        toast("err", "Couldn't move media", (r.body && r.body.error) || "Check the path and that removable-media is connected.");
+      }
+      Promise.all([refreshStatus(), refreshMounts()]).then(renderNas);
+    });
+  }
+  function mediaLocRevert() {
+    mediaLoc.busy = true; renderNas();
+    api("POST", "/api/media-location", { reset: true }).then(function (r) {
+      mediaLoc.busy = false;
+      if (r.ok) toast("info", "Reverted to internal storage", "External media is left on disk; the library is now back in snap storage.");
+      else toast("err", "Couldn't revert", (r.body && r.body.error) || "Try again.");
+      Promise.all([refreshStatus(), refreshMounts()]).then(renderNas);
+    });
   }
 
   function nasValidate() {

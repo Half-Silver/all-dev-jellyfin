@@ -65,6 +65,16 @@ PORTAL_TOKEN = os.environ.get("PORTAL_TOKEN", "")
 RCLONE_BIN = os.environ.get("RCLONE_BIN", os.path.join(os.environ.get("SNAP", ""), "usr/bin/rclone"))
 RCLONE_CONFIG = Path(os.environ.get("RCLONE_CONFIG", os.path.join(SNAP_COMMON, "rclone.conf")))
 
+# Relocating the media store: the whole library can be moved off the snap's
+# (capped) writable area onto a host directory under one of these roots — the
+# exact paths the removable-media interface makes writable. The snap can write
+# only *subdirectories* of these, never the bare root (writing /media itself is
+# denied). MEDIA_DIR then becomes a symlink to the chosen dir, so Jellyfin's
+# library paths and uploads transparently follow it onto the external disk.
+EXTERNAL_MEDIA_ROOTS = ("/media", "/mnt", "/run/media")
+# Persisted choice (survives daemon restarts / reboots; reapplied on startup).
+MEDIA_LOC_STATE = Path(os.environ.get("MEDIA_LOC_STATE", os.path.join(SNAP_COMMON, "media-location.json")))
+
 # Categories the operator may upload into / that map to the seeded libraries.
 # Maps category -> (Jellyfin library display name, collectionType).
 CATEGORY_LIBRARIES = {
@@ -219,6 +229,129 @@ def disk_usage(path: Path) -> tuple[int, int]:
         return st.f_bavail * st.f_frsize, st.f_blocks * st.f_frsize
     except OSError:
         return 0, 0
+
+
+# ---------------------------------------------------------------------------
+# Media store location (move the whole library onto an external /media dir)
+# ---------------------------------------------------------------------------
+
+def validate_external_target(path: str) -> Path:
+    """Resolve a requested media dir; require a writable subdir of a removable
+    root (never the bare root, which the snap can't write — see the upload bug)."""
+    p = Path(path).resolve()
+    for r in EXTERNAL_MEDIA_ROOTS:
+        if str(p).startswith(r + os.sep) and str(p) != r:
+            return p
+    raise ValueError(f"path must be a subdirectory of {', '.join(EXTERNAL_MEDIA_ROOTS)}")
+
+
+def media_location_state() -> dict:
+    try:
+        with open(MEDIA_LOC_STATE, encoding="utf-8") as fh:
+            return json.load(fh)
+    except (OSError, ValueError):
+        return {}
+
+
+def save_media_location(state: dict) -> None:
+    try:
+        with open(MEDIA_LOC_STATE, "w", encoding="utf-8") as fh:
+            json.dump(state, fh)
+    except OSError as exc:
+        log(f"could not persist media location: {exc}")
+
+
+def media_is_external() -> bool:
+    """The store is external when MEDIA_DIR is a symlink into a removable root."""
+    try:
+        if not MEDIA_DIR.is_symlink():
+            return False
+        target = str(MEDIA_DIR.resolve())
+        return any(target.startswith(r + os.sep) for r in EXTERNAL_MEDIA_ROOTS)
+    except OSError:
+        return False
+
+
+def media_target() -> Path:
+    """Where the store physically lives (follows the symlink when external)."""
+    try:
+        return MEDIA_DIR.resolve()
+    except OSError:
+        return MEDIA_DIR
+
+
+def _iter_files(base: Path):
+    """Yield (absolute_path, path_relative_to_base) for every file under base."""
+    for root, _dirs, files in os.walk(base):
+        for f in files:
+            full = Path(root) / f
+            yield full, full.relative_to(base)
+
+
+def relocate_media(target: Path) -> dict:
+    """Move the whole media store onto `target` (a dir under a removable root).
+
+    MEDIA_DIR ($SNAP_COMMON/media) becomes a symlink to `target`, so Jellyfin's
+    existing library paths and the portal's uploads transparently follow it onto
+    the external disk — escaping the demo cap. Existing internal media is merged
+    in at file granularity; we never overwrite, and a pre-flight check aborts
+    (before moving anything) if a file already exists at the destination.
+    """
+    target.mkdir(parents=True, exist_ok=True)
+
+    moved = 0
+    if MEDIA_DIR.is_symlink():
+        MEDIA_DIR.unlink()                              # repoint an already-external store
+    elif MEDIA_DIR.is_dir():
+        files = list(_iter_files(MEDIA_DIR))            # snapshot before moving
+        clashes = [str(rel) for _full, rel in files if (target / rel).exists()]
+        if clashes:
+            raise OSError(
+                f"{len(clashes)} file(s) already exist under {target} "
+                f"({', '.join(clashes[:3])}…); move or remove them on the host, then retry")
+        for full, rel in files:                         # merge internal -> external
+            dst = target / rel
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(full), str(dst))
+            moved += 1
+        shutil.rmtree(MEDIA_DIR)                         # only empty dirs remain
+
+    for cat in ALLOWED_CATEGORIES:                       # seed library folders at dest
+        (target / cat).mkdir(parents=True, exist_ok=True)
+    MEDIA_DIR.parent.mkdir(parents=True, exist_ok=True)
+    MEDIA_DIR.symlink_to(target)
+    save_media_location({"target": str(target)})
+    log(f"media store relocated to {target} (migrated {moved} file(s))")
+    return {"target": str(target), "migrated": moved, "external": True}
+
+
+def revert_media() -> dict:
+    """Stop using the external store: restore $SNAP_COMMON/media as a real dir.
+
+    The external content is left untouched on disk (not deleted); libraries will
+    be empty until media is re-added internally."""
+    if MEDIA_DIR.is_symlink():
+        MEDIA_DIR.unlink()
+    MEDIA_DIR.mkdir(parents=True, exist_ok=True)
+    for cat in ALLOWED_CATEGORIES:
+        (MEDIA_DIR / cat).mkdir(parents=True, exist_ok=True)
+    save_media_location({})
+    log("media store reverted to internal $SNAP_COMMON/media")
+    return {"target": str(MEDIA_DIR), "external": False}
+
+
+def apply_media_location() -> None:
+    """On startup, re-establish the external symlink if one was configured."""
+    target = media_location_state().get("target")
+    if not target:
+        return
+    try:
+        tp = validate_external_target(target)
+        if media_is_external() and media_target() == tp:
+            return                                # already linked correctly
+        relocate_media(tp)
+    except (OSError, ValueError) as exc:
+        log(f"could not re-establish external media at {target}: {exc}")
 
 
 def set_rclone_section(section: str, lines: list[str]) -> None:
@@ -381,6 +514,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._handle_reset_password()
         if path == "/api/seed-libraries":
             return self._handle_seed_libraries()
+        if path == "/api/media-location":
+            return self._handle_media_location()
         if path == "/api/unmount":
             return self._handle_unmount()
         if path == "/api/scan":
@@ -419,13 +554,22 @@ class Handler(BaseHTTPRequestHandler):
 
     def _handle_status(self) -> None:
         used = dir_size_bytes(MEDIA_DIR) if MEDIA_DIR.exists() else 0
-        # "free of total" must be honest: the smaller of the demo cap remaining
-        # and the ACTUAL free space on the partition holding the media dir
+        disk_free, disk_total = disk_usage(MEDIA_DIR)
+        external = media_is_external()
+        # When the store lives on an external disk the demo cap doesn't apply:
+        # report the REAL disk free/total. Otherwise the "free of total" must be
+        # honest — the smaller of the demo cap remaining and actual disk free
         # (the snap's writable area can be much smaller than the 15 GiB cap, so
         # reporting cap-only made uploads appear to vanish when the disk filled).
-        cap_free = max(0, MEDIA_CAP_BYTES - used)
-        disk_free, disk_total = disk_usage(MEDIA_DIR)
-        free = min(cap_free, disk_free) if disk_free else cap_free
+        if external:
+            cap = disk_total or MEDIA_CAP_BYTES
+            free = disk_free
+            over = False
+        else:
+            cap = MEDIA_CAP_BYTES
+            cap_free = max(0, MEDIA_CAP_BYTES - used)
+            free = min(cap_free, disk_free) if disk_free else cap_free
+            over = used >= MEDIA_CAP_BYTES
         libraries = [{"id": cat, "name": name, "path": str(MEDIA_DIR / cat),
                       "size": dir_size_bytes(MEDIA_DIR / cat) if (MEDIA_DIR / cat).is_dir() else 0}
                      for cat, (name, _ct) in CATEGORY_LIBRARIES.items()]
@@ -433,16 +577,19 @@ class Handler(BaseHTTPRequestHandler):
             "jellyfin_url": JELLYFIN_URL,
             "media_dir": str(MEDIA_DIR),
             "media_root": str(MEDIA_DIR),
+            "media_external": external,
+            "media_target": str(media_target()),
+            "media_roots": list(EXTERNAL_MEDIA_ROOTS),
             "categories": list(ALLOWED_CATEGORIES),
             "libraries": libraries,
             "usage_bytes": used,
-            "cap_bytes": MEDIA_CAP_BYTES,
+            "cap_bytes": cap,
             "free_bytes": free,
-            "total_bytes": MEDIA_CAP_BYTES,
+            "total_bytes": cap,
             "disk_free_bytes": disk_free,
             "disk_total_bytes": disk_total,
-            "usage_percent": round(used * 100 / MEDIA_CAP_BYTES, 1) if MEDIA_CAP_BYTES else 0,
-            "over_cap": used >= MEDIA_CAP_BYTES,
+            "usage_percent": round(used * 100 / cap, 1) if cap else 0,
+            "over_cap": over,
         })
 
     def _handle_drives(self) -> None:
@@ -503,11 +650,13 @@ class Handler(BaseHTTPRequestHandler):
         if length <= 0:
             return self._send_json(HTTPStatus.LENGTH_REQUIRED, {"error": "Content-Length required"})
 
-        # Refuse if it won't fit: enforce BOTH the demo cap (media area only) and
-        # the real free space on the target partition. Checking real space stops
-        # uploads silently failing mid-write when the disk fills.
+        # Refuse if it won't fit: enforce BOTH the demo cap (internal media area
+        # only — an external store is uncapped) and the real free space on the
+        # target partition. Checking real space stops uploads silently failing
+        # mid-write when the disk fills.
         disk_free, _ = disk_usage(dest_dir)
-        cap_room = (MEDIA_CAP_BYTES - dir_size_bytes(MEDIA_DIR)) if in_media else length
+        capped = in_media and not media_is_external()
+        cap_room = (MEDIA_CAP_BYTES - dir_size_bytes(MEDIA_DIR)) if capped else disk_free
         room = min(cap_room, disk_free) if disk_free else cap_room
         if length > room:
             return self._send_json(HTTPStatus.INSUFFICIENT_STORAGE, {
@@ -883,6 +1032,38 @@ class Handler(BaseHTTPRequestHandler):
         results = seed_libraries(token)
         self._send_json(HTTPStatus.OK, {"results": results})
 
+    def _handle_media_location(self) -> None:
+        """Move the whole media store onto an external dir, or revert to internal.
+
+            POST /api/media-location  {"path": "/media/jellyfin"}   # relocate
+            POST /api/media-location  {"reset": true}               # back to internal
+
+        `path` must be a subdirectory of /media, /mnt or /run/media (the
+        removable-media-writable area). On success the store is symlinked there
+        and the Movies/Shows libraries are (re)registered against it.
+        """
+        body = self._read_json_body()
+        if body.get("reset"):
+            return self._send_json(HTTPStatus.OK, revert_media())
+        path = (body.get("path") or "").strip()
+        if not path:
+            return self._send_json(HTTPStatus.BAD_REQUEST, {
+                "error": "provide `path` (a dir under /media, /mnt or /run/media) "
+                         "or `reset: true`"})
+        try:
+            target = validate_external_target(path)
+        except ValueError as exc:
+            return self._send_json(HTTPStatus.BAD_REQUEST, {"error": str(exc)})
+        try:
+            result = relocate_media(target)
+        except OSError as exc:
+            # name clash during migration, or the snap can't write the target
+            # (e.g. removable-media not connected) — surface it cleanly.
+            return self._send_json(HTTPStatus.CONFLICT, {"error": str(exc)})
+        # Re-point Jellyfin at the (possibly fresh) external library folders.
+        result["libraries"] = seed_libraries(body.get("token"))
+        self._send_json(HTTPStatus.OK, result)
+
     # -- static files ------------------------------------------------------
 
     def _serve_static(self, path: str) -> None:
@@ -912,10 +1093,14 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> int:
+    # Re-establish an external media store (symlink) before creating dirs/seeding,
+    # so everything below operates on the relocated location.
+    apply_media_location()
     MEDIA_DIR.mkdir(parents=True, exist_ok=True)
     for cat in ALLOWED_CATEGORIES:
         (MEDIA_DIR / cat).mkdir(parents=True, exist_ok=True)
-    log(f"serving on 0.0.0.0:{PORT}  media_dir={MEDIA_DIR}  static={STATIC_DIR}")
+    log(f"serving on 0.0.0.0:{PORT}  media_dir={MEDIA_DIR}  "
+        f"external={media_is_external()}  static={STATIC_DIR}")
     if not PORTAL_TOKEN:
         log("WARNING: PORTAL_TOKEN unset — API is open (set it via `snap set` for auth)")
     # Best-effort: seed the Movies/Shows libraries once Jellyfin is reachable.
