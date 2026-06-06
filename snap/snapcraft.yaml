@@ -44,6 +44,18 @@ package-repositories:
       - arm64
       - amd64
 
+# CT Engine lifecycle hooks need network access to send update/stop
+# callbacks to Control Tower under strict confinement. (configure needs no
+# network — it only persists config and restarts the ct-engine sidecar via
+# snapctl.)
+hooks:
+  pre-refresh:
+    plugs: [network]
+  post-refresh:
+    plugs: [network]
+  remove:
+    plugs: [network]
+
 parts:
   jellyfin:
     plugin: nil

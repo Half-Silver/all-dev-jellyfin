@@ -1,0 +1,11 @@
+#!/bin/sh
+# post-refresh hook: tell Control Tower the update finished (update_complete).
+# Best-effort — a non-zero exit would roll back an otherwise-successful update,
+# so this must never fail.
+export PATH="$SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH"
+
+if [ -x "$SNAP/bin/ct-engine-run" ]; then
+    "$SNAP/bin/ct-engine-run" hook-post-refresh || true
+fi
+
+exit 0

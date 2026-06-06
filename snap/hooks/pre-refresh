@@ -1,0 +1,11 @@
+#!/bin/sh
+# pre-refresh hook: tell Control Tower an update is starting (update_started)
+# so the imminent service stop is NOT mistaken for an uninstall. Best-effort —
+# a non-zero exit would abort the refresh, so this must never fail.
+export PATH="$SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH"
+
+if [ -x "$SNAP/bin/ct-engine-run" ]; then
+    "$SNAP/bin/ct-engine-run" hook-pre-refresh || true
+fi
+
+exit 0
