@@ -44,7 +44,6 @@ package-repositories:
       - arm64
       - amd64
 
-# CT Engine lifecycle hooks need network access to send update/stop
 # callbacks to Control Tower under strict confinement. (configure needs no
 # network — it only persists config and restarts the ct-engine sidecar via
 # snapctl.)
@@ -58,7 +57,6 @@ hooks:
 
 parts:
   jellyfin:
-    plugin: nil
     stage-packages:
       - jellyfin-server:${CRAFT_ARCH_BUILD_FOR}
       - jellyfin-web:all
@@ -83,7 +81,6 @@ parts:
       - -usr/lib/jellyfin/bin/libcoreclrtraceptprovider.so
 
   scripts:
-    plugin: nil
     source: scripts
     build-packages:
       - shellcheck
@@ -91,114 +88,6 @@ parts:
       shellcheck "${CRAFT_PART_BUILD}"/*.sh
       install -Dm0755 "${CRAFT_PART_BUILD}"/*.sh \
         -t "${CRAFT_PART_INSTALL}"/usr/local/bin
-
-  # Control Tower engine: the ct-engine python script, its launcher wrapper,
-  # and its plugin.yaml manifest. The launcher resolves the bundled python3
-  # (staged by ct-runtime) and runs the engine; the manifest is placed at the
-  # snap root where ct-engine looks for $SNAP/plugin.yaml.
-  ct-engine:
-    plugin: dump
-    source: ct-engine/
-    organize:
-      ct_engine.py: bin/ct-engine
-      ct-engine-run: bin/ct-engine-run
-      plugin.yaml: plugin.yaml
-    stage:
-      - bin/ct-engine
-      - bin/ct-engine-run
-      - plugin.yaml
-
-  # Runtime deps for the ct-engine sidecar AND the media-portal app: python3 to
-  # execute them and ca-certificates so HTTPS callbacks verify. Full `python3`
-  # (not just python3-minimal) because media-portal uses http.server, which the
-  # minimal package may omit.
-  ct-runtime:
-    plugin: nil
-    stage-packages:
-      - ca-certificates
-      - python3
-
-  # media-portal: companion web service ("plugin that lives with Jellyfin").
-  # Serves a web UI + /api endpoints to upload media into $SNAP_COMMON/media,
-  # mount a NAS, and reset the Jellyfin password. Frontend in static/ is a
-  # placeholder until the design files land. See portal/server.py.
-  media-portal:
-    plugin: dump
-    source: portal/
-    organize:
-      server.py: bin/media-portal-server
-      portal-run: bin/portal-run
-      static: portal-static
-    stage:
-      - bin/media-portal-server
-      - bin/portal-run
-      - portal-static
-
-  # Self-contained SMB/CIFS mounting for media-portal: rclone mounts an SMB
-  # share over FUSE (snapd mount-control cannot mount cifs/nfs). fusermount3 is
-  # the helper rclone needs to (un)mount. Requires the fuse-support plug.
-  rclone:
-    plugin: nil
-    stage-packages:
-      - rclone
-      - fuse3
-
-apps:
-  vainfo:
-    command: usr/bin/vainfo
-    plugs:
-      - opengl
-    environment: &_environment
-      LD_LIBRARY_PATH: /usr/lib/jellyfin-ffmpeg/lib:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/vdpau:$LD_LIBRARY_PATH
-      LIBGL_DRIVERS_PATH: /usr/lib/jellyfin-ffmpeg/lib:/usr/lib/jellyfin-ffmpeg/lib/dri:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/dri:$LIBGL_DRIVERS_PATH
-      LIBVA_DRIVERS_PATH: /usr/lib/jellyfin-ffmpeg/lib:/usr/lib/jellyfin-ffmpeg/lib/dri:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/dri:$LIBVA_DRIVERS_PATH
-  ffmpeg:
-    command: usr/lib/jellyfin-ffmpeg/ffmpeg
-    plugs:
-      - opengl
-    environment: *_environment
-  clinfo:
-    command: usr/bin/clinfo
-    environment: *_environment
-    plugs:
-      - opengl
-  all-dev-jellyfin:
-    command: usr/local/bin/jellyfin.sh
-    daemon: simple
-    plugs:
-      # NOTE: `home` is intentionally NOT plugged. On headless/userless Core it
-      # exposes nothing useful, and dropping it stops the snap bind-mounting the
-      # host home into Jellyfin's view (part of restricting what the library
-      # picker can browse). Media lives in $SNAP_COMMON/media; USB drives are
-      # reached via removable-media.
-      # `mount-observe` is intentionally NOT plugged: it let Jellyfin enumerate
-      # the host mount table (incl. /var/lib/snapd/hostfs/*) and surface those
-      # paths in the library picker. Jellyfin works fine without it.
-      - network
-      - network-bind
-      - opengl
-      - removable-media
-      - firewall-control
-    environment:
-      <<: *_environment
-      JELLYFIN_LOG_DIR: "${SNAP_DATA}/logs"
-      JELLYFIN_CACHE_DIR: "${SNAP_COMMON}/cache"
-      JELLYFIN_CONFIG_DIR: "${SNAP_COMMON}/config"
-      JELLYFIN_DATA_DIR: "${SNAP_COMMON}/data"
-      JELLYFIN_WEB_DIR: "${SNAP}/usr/share/jellyfin/web"
-
-  # Control Tower integration sidecar. Runs alongside the jellyfin daemon
-  # (it does not manage it): validates/persists the config CT pushes via
-  # `snap set` and streams status callbacks to ct-callback-url. Driven by
-  # ct-engine/plugin.yaml (sidecar mode).
-  ct-engine:
-    command: bin/ct-engine-run run
-    daemon: simple
-    install-mode: enable
-    restart-condition: always
-    plugs:
-      - network
-      - network-bind
 
   # Companion web portal. Runs as its own daemon next to the jellyfin server;
   # shares $SNAP_COMMON so it can write the media library and read Jellyfin's
