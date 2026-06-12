@@ -44,9 +44,63 @@ package-repositories:
       - arm64
       - amd64
 
-# callbacks to Control Tower under strict confinement. (configure needs no
-# network — it only persists config and restarts the ct-engine sidecar via
-# snapctl.)
+apps:
+  vainfo:
+    command: usr/bin/vainfo
+    plugs:
+      - opengl
+    environment: &_environment
+      LD_LIBRARY_PATH: /usr/lib/jellyfin-ffmpeg/lib:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/vdpau:$LD_LIBRARY_PATH
+      LIBGL_DRIVERS_PATH: /usr/lib/jellyfin-ffmpeg/lib:/usr/lib/jellyfin-ffmpeg/lib/dri:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/dri:$LIBGL_DRIVERS_PATH
+      LIBVA_DRIVERS_PATH: /usr/lib/jellyfin-ffmpeg/lib:/usr/lib/jellyfin-ffmpeg/lib/dri:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/dri:$LIBVA_DRIVERS_PATH
+  ffmpeg:
+    command: usr/lib/jellyfin-ffmpeg/ffmpeg
+    plugs:
+      - opengl
+    environment: *_environment
+  clinfo:
+    command: usr/bin/clinfo
+    environment: *_environment
+    plugs:
+      - opengl
+  all-dev-jellyfin:
+    command: usr/local/bin/jellyfin.sh
+    daemon: simple
+    plugs:
+      - network
+      - network-bind
+      - opengl
+      - removable-media
+      - firewall-control
+    environment:
+      <<: *_environment
+      JELLYFIN_LOG_DIR: "${SNAP_DATA}/logs"
+      JELLYFIN_CACHE_DIR: "${SNAP_COMMON}/cache"
+      JELLYFIN_CONFIG_DIR: "${SNAP_COMMON}/config"
+      JELLYFIN_DATA_DIR: "${SNAP_COMMON}/data"
+      JELLYFIN_WEB_DIR: "${SNAP}/usr/share/jellyfin/web"
+
+  media-portal:
+    command: bin/portal-run
+    daemon: simple
+    install-mode: enable
+    restart-condition: always
+    plugs:
+      - network
+      - network-bind
+      - removable-media
+      - fuse-support
+    environment:
+      PORTAL_PORT: "8097"
+      PORTAL_STATIC: "$SNAP/portal-static"
+      MEDIA_DIR: "$SNAP_COMMON/media"
+      JELLYFIN_URL: "http://127.0.0.1:8096"
+      JELLYFIN_DATA_DIR: "$SNAP_COMMON/data"
+      JELLYFIN_CONFIG_DIR: "$SNAP_COMMON/config"
+      MEDIA_CAP_BYTES: "16106127360"
+      RCLONE_BIN: "$SNAP/usr/bin/rclone"
+      RCLONE_CONFIG: "$SNAP_COMMON/rclone.conf"
+
 hooks:
   pre-refresh:
     plugs: [network]
