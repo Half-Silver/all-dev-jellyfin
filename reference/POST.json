@@ -8,11 +8,7 @@
   "snap_config": [
     {
       "snap": "all-dev-jellyfin",
-      "settings": {
-        "ct-node-id": "<ALL_APP_NODE_ID>",
-        "ct-callback-url": "<ALL_APP_CALLBACK_URL>",
-        "ct-deployment-id": "<ALL_APP_DEPLOYMENT_ID>"
-      }
+      "settings": {}
     }
   ],
   "ignore_failures": false,
@@ -20,7 +16,6 @@
   "post_service_actions": [
     {
       "names": [
-        "all-dev-jellyfin.ct-engine",
         "all-dev-jellyfin.media-portal"
       ],
       "action": "restart"

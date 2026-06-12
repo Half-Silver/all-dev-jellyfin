@@ -20,8 +20,5 @@ export PATH="$SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH"
 # this hook runs on install and on every config change.
 mkdir -p "$SNAP_COMMON/media/movies" "$SNAP_COMMON/media/tvshows" 2>/dev/null || true
 
-if [ -x "$SNAP/bin/ct-engine-run" ]; then
-    "$SNAP/bin/ct-engine-run" hook-configure || true
-fi
 
 exit 0
