@@ -1,4 +1,3 @@
----
 # SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2021 Canonical Ltd
 name: all-dev-jellyfin
@@ -44,6 +43,63 @@ package-repositories:
       - arm64
       - amd64
 
+parts:
+  jellyfin:
+    plugin: nil
+    stage-packages:
+      - jellyfin-server:${CRAFT_ARCH_BUILD_FOR}
+      - jellyfin-web:all
+      - jellyfin-ffmpeg7:${CRAFT_ARCH_BUILD_FOR}
+      - va-driver-all:${CRAFT_ARCH_BUILD_FOR}
+      - libavcodec60:${CRAFT_ARCH_BUILD_FOR}
+      - libavcodec-extra60:${CRAFT_ARCH_BUILD_FOR}
+      - vainfo:${CRAFT_ARCH_BUILD_FOR}
+      - libdrm-common:${CRAFT_ARCH_BUILD_FOR}
+      - clinfo:${CRAFT_ARCH_BUILD_FOR}
+      - on amd64:
+          - intel-opencl-icd:${CRAFT_ARCH_BUILD_FOR}
+          - libquadmath0:${CRAFT_ARCH_BUILD_FOR}
+    override-build: |
+      craftctl default
+      craftctl set grade="stable"
+      craftctl set version="$(apt info jellyfin-server | grep -E "^Version:" | cut -f2 -d\ )"
+    prime:
+      - -usr/share/man
+      - -var/spool
+      # This library is unused and links against another library which doesn't exist in 22.04
+      - -usr/lib/jellyfin/bin/libcoreclrtraceptprovider.so
+
+  scripts:
+    plugin: nil
+    source: scripts
+    build-packages:
+      - shellcheck
+    override-build: |
+      shellcheck "${CRAFT_PART_BUILD}"/*.sh
+      install -Dm0755 "${CRAFT_PART_BUILD}"/*.sh \
+        -t "${CRAFT_PART_INSTALL}"/usr/local/bin
+
+  media-portal:
+    plugin: dump
+    source: portal/
+    organize:
+      server.py: bin/media-portal-server
+      portal-run: bin/portal-run
+      static: portal-static
+    stage:
+      - bin/media-portal-server
+      - bin/portal-run
+      - portal-static
+
+  # Self-contained SMB/CIFS mounting for media-portal: rclone mounts an SMB
+  # share over FUSE (snapd mount-control cannot mount cifs/nfs). fusermount3 is
+  # the helper rclone needs to (un)mount. Requires the fuse-support plug.
+  rclone:
+    plugin: nil
+    stage-packages:
+      - rclone
+      - fuse3
+
 apps:
   vainfo:
     command: usr/bin/vainfo
@@ -67,6 +123,14 @@ apps:
     command: usr/local/bin/jellyfin.sh
     daemon: simple
     plugs:
+      # NOTE: `home` is intentionally NOT plugged. On headless/userless Core it
+      # exposes nothing useful, and dropping it stops the snap bind-mounting the
+      # host home into Jellyfin's view (part of restricting what the library
+      # picker can browse). Media lives in $SNAP_COMMON/media; USB drives are
+      # reached via removable-media.
+      # `mount-observe` is intentionally NOT plugged: it let Jellyfin enumerate
+      # the host mount table (incl. /var/lib/snapd/hostfs/*) and surface those
+      # paths in the library picker. Jellyfin works fine without it.
       - network
       - network-bind
       - opengl
@@ -80,76 +144,6 @@ apps:
       JELLYFIN_DATA_DIR: "${SNAP_COMMON}/data"
       JELLYFIN_WEB_DIR: "${SNAP}/usr/share/jellyfin/web"
 
-  media-portal:
-    command: bin/portal-run
-    daemon: simple
-    install-mode: enable
-    restart-condition: always
-    plugs:
-      - network
-      - network-bind
-      - removable-media
-      - fuse-support
-    environment:
-      PORTAL_PORT: "8097"
-      PORTAL_STATIC: "$SNAP/portal-static"
-      MEDIA_DIR: "$SNAP_COMMON/media"
-      JELLYFIN_URL: "http://127.0.0.1:8096"
-      JELLYFIN_DATA_DIR: "$SNAP_COMMON/data"
-      JELLYFIN_CONFIG_DIR: "$SNAP_COMMON/config"
-      MEDIA_CAP_BYTES: "16106127360"
-      RCLONE_BIN: "$SNAP/usr/bin/rclone"
-      RCLONE_CONFIG: "$SNAP_COMMON/rclone.conf"
-
-hooks:
-  pre-refresh:
-    plugs: [network]
-  post-refresh:
-    plugs: [network]
-  remove:
-    plugs: [network]
-
-parts:
-  jellyfin:
-    stage-packages:
-      - jellyfin-server:${CRAFT_ARCH_BUILD_FOR}
-      - jellyfin-web:all
-      - jellyfin-ffmpeg7:${CRAFT_ARCH_BUILD_FOR}
-      - va-driver-all:${CRAFT_ARCH_BUILD_FOR}
-      - libavcodec60:${CRAFT_ARCH_BUILD_FOR}
-      - libavcodec-extra60:${CRAFT_ARCH_BUILD_FOR}
-      - vainfo:${CRAFT_ARCH_BUILD_FOR}
-      - libdrm-common:${CRAFT_ARCH_BUILD_FOR}
-      - clinfo:${CRAFT_ARCH_BUILD_FOR}
-      - on amd64:
-        - intel-opencl-icd:${CRAFT_ARCH_BUILD_FOR}
-        - libquadmath0:${CRAFT_ARCH_BUILD_FOR}
-    override-build: |
-      craftctl default
-      craftctl set grade="stable"
-      craftctl set version="$(apt info jellyfin-server | grep -E "^Version:" | cut -f2 -d\ )"
-    prime:
-      - -usr/share/man
-      - -var/spool
-      # This library is unused and links against another library which doesn't exist in 22.04
-      - -usr/lib/jellyfin/bin/libcoreclrtraceptprovider.so
-
-  scripts:
-    source: scripts
-    build-packages:
-      - shellcheck
-    override-build: |
-      shellcheck "${CRAFT_PART_BUILD}"/*.sh
-      install -Dm0755 "${CRAFT_PART_BUILD}"/*.sh \
-        -t "${CRAFT_PART_INSTALL}"/usr/local/bin
-
-  # Companion web portal. Runs as its own daemon next to the jellyfin server;
-  # shares $SNAP_COMMON so it can write the media library and read Jellyfin's
-  # data dir directly (for the password-reset PIN file). removable-media lets it
-  # list/import from USB drives and host-mounted NFS; fuse-support lets it mount
-  # SMB shares via rclone. removable-media and fuse-support are manual-connect —
-  # wired in reference/POST.json. (mount detection uses /proc/self/mounts, which
-  # needs no interface, so mount-observe isn't required.)
   media-portal:
     command: bin/portal-run
     daemon: simple
